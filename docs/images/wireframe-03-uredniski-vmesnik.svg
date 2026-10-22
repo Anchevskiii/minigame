@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .box { fill: #ffffff; stroke: #1e293b; stroke-width: 1.5; }
+      .block { fill: #1e293b; }
+      .btn { fill: #ffffff; stroke: #1e293b; stroke-width: 1.5; }
+      .btn-dark { fill: #1e293b; stroke: #1e293b; stroke-width: 1.5; }
+      .line { stroke: #64748b; stroke-width: 2; stroke-linecap: round; }
+      .text-title { font-family: system-ui, -apple-system, sans-serif; font-size: 14px; font-weight: 700; fill: #0f172a; text-anchor: middle; dominant-baseline: central; }
+      .text-label { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; font-weight: 700; fill: #475569; dominant-baseline: central; }
+      .text-body { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; font-weight: 500; fill: #1e293b; dominant-baseline: central; }
+      .text-btn { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; font-weight: 600; fill: #0f172a; text-anchor: middle; dominant-baseline: central; }
+      .text-btn-white { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; font-weight: 600; fill: #ffffff; text-anchor: middle; dominant-baseline: central; }
+    </style>
+  </defs>
+
+  <rect width="1000" height="650" class="bg"/>
+
+  <!-- GLAVA -->
+  <rect x="20" y="20" width="960" height="45" class="box"/>
+  <text x="65" y="42" class="text-title">UREDNIK</text>
+  <rect x="120" y="30" width="70" height="25" class="box"/>
+  <text x="155" y="42" class="text-title">ADMIN</text>
+
+  <g transform="translate(870, 29)">
+    <rect x="0" y="0" width="90" height="27" class="btn-dark"/>
+    <text x="45" y="13" class="text-btn-white">ODJAVA</text>
+  </g>
+
+  <!-- LEVI STRANSKI MENI -->
+  <g transform="translate(20, 80)">
+    <rect x="0" y="0" width="210" height="540" class="box"/>
+    <text x="30" y="30" class="text-label">MENI</text>
+
+    <!-- Navigacijski gumbi -->
+    <g transform="translate(15, 55)">
+      <rect x="0" y="0" width="180" height="36" class="btn-dark"/>
+      <text x="90" y="18" class="text-btn-white">NOVA UGANKA</text>
+
+      <rect x="0" y="48" width="180" height="36" class="btn"/>
+      <text x="90" y="66" class="text-btn">KOLEDAR</text>
+
+      <rect x="0" y="96" width="180" height="36" class="btn"/>
+      <text x="90" y="114" class="text-btn">SEZNAM</text>
+
+      <rect x="0" y="144" width="180" height="36" class="btn"/>
+      <text x="90" y="162" class="text-btn">STATISTIKA</text>
+    </g>
+
+    <!-- Shematski bloki za opombe -->
+    <g transform="translate(20, 440)">
+      <line x1="0" y1="0" x2="170" y2="0" class="line"/>
+      <line x1="0" y1="18" x2="140" y2="18" class="line"/>
+      <line x1="0" y1="36" x2="160" y2="36" class="line"/>
+      <line x1="0" y1="54" x2="110" y2="54" class="line"/>
+    </g>
+  </g>
+
+  <!-- GLAVNI PANEL -->
+  <g transform="translate(250, 80)">
+    <rect x="0" y="0" width="730" height="540" class="box"/>
+
+    <text x="30" y="32" class="text-label">PRIPRAVA NOVEGA CLANKA</text>
+
+    <!-- 1 UVOZ -->
+    <g transform="translate(30, 60)">
+      <text x="0" y="10" class="text-label">WIKIPEDIJA POVEZAVA</text>
+      <rect x="0" y="24" width="520" height="36" class="box"/>
+      <text x="15" y="42" class="text-body">HTTPS SL WIKIPEDIA ORG WIKI GRAVITACIJA</text>
+
+      <rect x="535" y="24" width="135" height="36" class="btn-dark"/>
+      <text x="602" y="42" class="text-btn-white">UVOZI</text>
+    </g>
+
+    <!-- 2 NASTAVITVE -->
+    <g transform="translate(30, 145)">
+      <!-- Naslov -->
+      <g transform="translate(0, 0)">
+        <text x="0" y="10" class="text-label">NASLOV</text>
+        <rect x="0" y="24" width="210" height="36" class="box"/>
+        <text x="15" y="42" class="text-body">GRAVITACIJA</text>
+      </g>
+
+      <!-- Težavnost -->
+      <g transform="translate(230, 0)">
+        <text x="0" y="10" class="text-label">TEZAVNOST</text>
+        <rect x="0" y="24" width="210" height="36" class="box"/>
+        <text x="15" y="42" class="text-body">SREDNJA</text>
+      </g>
+
+      <!-- Datum -->
+      <g transform="translate(460, 0)">
+        <text x="0" y="10" class="text-label">DATUM</text>
+        <rect x="0" y="24" width="210" height="36" class="box"/>
+        <text x="15" y="42" class="text-body">25 10 2026</text>
+      </g>
+    </g>
+
+    <!-- 3 PREDOGLED CENZURE -->
+    <g transform="translate(30, 235)">
+      <text x="0" y="10" class="text-label">PREDOGLED BESEDILA</text>
+
+      <rect x="0" y="24" width="670" height="200" class="box"/>
+
+      <!-- Naslov v predogledu -->
+      <rect x="25" y="45" width="140" height="22" class="block"/>
+
+      <!-- Vrstice s cenzuro v predogledu -->
+      <g transform="translate(25, 85)">
+        <rect x="0" y="0" width="80" height="14" class="block"/>
+        <line x1="90" y1="7" x2="180" y2="7" class="line"/>
+        <rect x="190" y="0" width="100" height="14" class="block"/>
+        <line x1="300" y1="7" x2="450" y2="7" class="line"/>
+        <rect x="460" y="0" width="70" height="14" class="block"/>
+        <line x1="540" y1="7" x2="620" y2="7" class="line"/>
+
+        <line x1="0" y1="28" x2="110" y2="28" class="line"/>
+        <rect x="120" y="21" width="90" height="14" class="block"/>
+        <line x1="220" y1="28" x2="380" y2="28" class="line"/>
+        <rect x="390" y="21" width="110" height="14" class="block"/>
+        <line x1="510" y1="28" x2="620" y2="28" class="line"/>
+
+        <rect x="0" y="42" width="120" height="14" class="block"/>
+        <line x1="130" y1="49" x2="290" y2="49" class="line"/>
+        <rect x="300" y="42" width="80" height="14" class="block"/>
+        <line x1="390" y1="49" x2="580" y2="49" class="line"/>
+
+        <line x1="0" y1="70" x2="160" y2="70" class="line"/>
+        <rect x="170" y="63" width="90" height="14" class="block"/>
+        <line x1="270" y1="70" x2="490" y2="70" class="line"/>
+      </g>
+    </g>
+
+    <!-- AKCIJSKA GUMBA SPODAJ -->
+    <g transform="translate(30, 480)">
+      <rect x="0" y="0" width="180" height="38" class="btn"/>
+      <text x="90" y="19" class="text-btn">PREDOGLED</text>
+
+      <rect x="490" y="0" width="180" height="38" class="btn-dark"/>
+      <text x="580" y="19" class="text-btn-white">SHRANI</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg-dim { fill: #f1f5f9; }
+      .box { fill: #ffffff; stroke: #1e293b; stroke-width: 1.5; }
+      .box-dark { fill: #1e293b; stroke: #1e293b; stroke-width: 1.5; }
+      .btn { fill: #ffffff; stroke: #1e293b; stroke-width: 1.5; }
+      .btn-dark { fill: #1e293b; stroke: #1e293b; stroke-width: 1.5; }
+      .line { stroke: #94a3b8; stroke-width: 2; stroke-linecap: round; }
+      .text-title { font-family: system-ui, -apple-system, sans-serif; font-size: 16px; font-weight: 700; fill: #0f172a; text-anchor: middle; dominant-baseline: central; }
+      .text-large { font-family: system-ui, -apple-system, sans-serif; font-size: 20px; font-weight: 700; fill: #0f172a; text-anchor: middle; dominant-baseline: central; }
+      .text-body { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; font-weight: 600; fill: #475569; text-anchor: middle; dominant-baseline: central; }
+      .text-btn { font-family: system-ui, -apple-system, sans-serif; font-size: 12px; font-weight: 600; fill: #0f172a; text-anchor: middle; dominant-baseline: central; }
+      .text-btn-white { font-family: system-ui, -apple-system, sans-serif; font-size: 12px; font-weight: 600; fill: #ffffff; text-anchor: middle; dominant-baseline: central; }
+    </style>
+  </defs>
+
+  <!-- OZADJE -->
+  <rect width="1000" height="650" class="bg-dim"/>
+
+  <!-- SHEMATSKI ORIS IGRALNEGA ZASLONA V OZADJU -->
+  <g opacity="0.35">
+    <rect x="30" y="25" width="940" height="40" class="box"/>
+    <rect x="30" y="80" width="650" height="470" class="box"/>
+    <rect x="700" y="80" width="270" height="470" class="box"/>
+    <rect x="30" y="570" width="940" height="50" class="box"/>
+  </g>
+
+  <!-- MODALNO OKNO -->
+  <g transform="translate(260, 50)">
+    <rect x="0" y="0" width="480" height="540" class="box"/>
+
+    <!-- Gumb zapri zgoraj desno -->
+    <rect x="435" y="15" width="30" height="30" class="btn"/>
+    <line x1="444" y1="24" x2="456" y2="36" stroke="#1e293b" stroke-width="2"/>
+    <line x1="456" y1="24" x2="444" y2="36" stroke="#1e293b" stroke-width="2"/>
+
+    <!-- Naslov modalnega okna -->
+    <text x="240" y="55" class="text-title">ČESTITKE</text>
+    <text x="240" y="80" class="text-body">UGANJENO GESLO</text>
+
+    <!-- Uganjeno geslo -->
+    <rect x="40" y="100" width="400" height="45" class="box"/>
+    <text x="240" y="123" class="text-large">ALBERT EINSTEIN</text>
+
+    <!-- 4 Metrike -->
+    <g transform="translate(40, 165)">
+      <!-- Poskusi -->
+      <rect x="0" y="0" width="90" height="65" class="box"/>
+      <text x="45" y="24" class="text-large">38</text>
+      <text x="45" y="47" class="text-body">POSKUSI</text>
+
+      <!-- Natančnost -->
+      <rect x="103" y="0" width="90" height="65" class="box"/>
+      <text x="148" y="24" class="text-large">47</text>
+      <text x="148" y="47" class="text-body">ODSTOTKOV</text>
+
+      <!-- Čas -->
+      <rect x="206" y="0" width="90" height="65" class="box"/>
+      <text x="251" y="24" class="text-large">06 24</text>
+      <text x="251" y="47" class="text-body">ČAS</text>
+
+      <!-- Namigi -->
+      <rect x="310" y="0" width="90" height="65" class="box"/>
+      <text x="355" y="24" class="text-large">1</text>
+      <text x="355" y="47" class="text-body">NAMIGI</text>
+    </g>
+
+    <!-- Dnevni niz -->
+    <g transform="translate(40, 250)">
+      <rect x="0" y="0" width="400" height="45" class="box"/>
+      <text x="110" y="23" class="text-btn">DNEVNI NIZ</text>
+      <text x="330" y="23" class="text-large">7 DNI</text>
+    </g>
+
+    <!-- Dosežek značka -->
+    <g transform="translate(40, 310)">
+      <rect x="0" y="0" width="400" height="45" class="box"/>
+      <text x="110" y="23" class="text-btn">NOVI DOSEŽEK</text>
+      <text x="300" y="23" class="text-body">TEDEN BREZ PREDAHA</text>
+    </g>
+
+    <!-- Gumb deli rezultat -->
+    <g transform="translate(40, 375)">
+      <rect x="0" y="0" width="400" height="45" class="btn-dark"/>
+      <text x="200" y="23" class="text-btn-white">DELI REZULTAT</text>
+    </g>
+
+    <!-- Navigacijska gumba -->
+    <g transform="translate(40, 435)">
+      <rect x="0" y="0" width="190" height="40" class="btn"/>
+      <text x="95" y="20" class="text-btn">LESTVICA</text>
+
+      <rect x="210" y="0" width="190" height="40" class="btn"/>
+      <text x="305" y="20" class="text-btn">ARHIV</text>
+    </g>
+
+    <!-- Čas naslednjega izziva -->
+    <text x="240" y="505" class="text-body">NASLEDNJI IZZIV OB POLNOČI</text>
+  </g>
+</svg>
