@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .box { fill: #ffffff; stroke: #1e293b; stroke-width: 1.5; }
+      .box-highlight { fill: #f8fafc; stroke: #1e293b; stroke-width: 1.5; stroke-dasharray: 4 4; }
+      .btn { fill: #ffffff; stroke: #1e293b; stroke-width: 1.5; }
+      .btn-dark { fill: #1e293b; stroke: #1e293b; stroke-width: 1.5; }
+      .line { stroke: #64748b; stroke-width: 2; stroke-linecap: round; }
+      .line-light { stroke: #cbd5e1; stroke-width: 1; }
+      .text-title { font-family: system-ui, -apple-system, sans-serif; font-size: 13px; font-weight: 700; fill: #0f172a; text-anchor: middle; dominant-baseline: central; }
+      .text-label { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; font-weight: 700; fill: #475569; dominant-baseline: central; }
+      .text-body { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; font-weight: 500; fill: #1e293b; dominant-baseline: central; }
+      .text-btn { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; font-weight: 600; fill: #0f172a; text-anchor: middle; dominant-baseline: central; }
+      .text-btn-white { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; font-weight: 600; fill: #ffffff; text-anchor: middle; dominant-baseline: central; }
+    </style>
+  </defs>
+
+  <rect width="1000" height="650" class="bg"/>
+
+  <!-- GLAVA -->
+  <rect x="20" y="20" width="960" height="45" class="box"/>
+  <text x="60" y="42" class="text-title">REDACTED</text>
+
+  <g transform="translate(800, 29)">
+    <rect x="0" y="0" width="70" height="27" class="btn"/>
+    <text x="35" y="13.5" class="text-btn">IGRA</text>
+
+    <rect x="80" y="0" width="80" height="27" class="btn-dark"/>
+    <text x="120" y="13.5" class="text-btn-white">PROFIL</text>
+  </g>
+
+  <!-- LEVI DEL: ARHIV -->
+  <g transform="translate(20, 80)">
+    <rect x="0" y="0" width="550" height="540" class="box"/>
+    <text x="25" y="30" class="text-label">ARHIV</text>
+
+    <!-- Iskalnik in filter -->
+    <g transform="translate(25, 55)">
+      <rect x="0" y="0" width="350" height="34" class="box"/>
+      <text x="15" y="17" class="text-label">ISKANJE</text>
+
+      <rect x="365" y="0" width="135" height="34" class="box"/>
+      <text x="432.5" y="17" class="text-btn">VSE</text>
+    </g>
+
+    <!-- Kartice ugank -->
+    <g transform="translate(25, 105)">
+      <!-- Izziv 41 -->
+      <rect x="0" y="0" width="500" height="65" class="box"/>
+      <text x="110" y="24" class="text-title">IZZIV 41</text>
+      <line x1="25" y1="42" x2="195" y2="42" class="line"/>
+      <rect x="380" y="16.5" width="105" height="32" class="btn"/>
+      <text x="432.5" y="32.5" class="text-btn">RESENO</text>
+
+      <!-- Izziv 40 -->
+      <rect x="0" y="75" width="500" height="65" class="box"/>
+      <text x="110" y="99" class="text-title">IZZIV 40</text>
+      <line x1="25" y1="117" x2="195" y2="117" class="line"/>
+      <rect x="380" y="91.5" width="105" height="32" class="btn-dark"/>
+      <text x="432.5" y="107.5" class="text-btn-white">RESUJ</text>
+
+      <!-- Izziv 39 -->
+      <rect x="0" y="150" width="500" height="65" class="box"/>
+      <text x="110" y="174" class="text-title">IZZIV 39</text>
+      <line x1="25" y1="192" x2="195" y2="192" class="line"/>
+      <rect x="380" y="166.5" width="105" height="32" class="btn"/>
+      <text x="432.5" y="182.5" class="text-btn">RESENO</text>
+
+      <!-- Izziv 38 -->
+      <rect x="0" y="225" width="500" height="65" class="box"/>
+      <text x="110" y="249" class="text-title">IZZIV 38</text>
+      <line x1="25" y1="267" x2="195" y2="267" class="line"/>
+      <rect x="380" y="241.5" width="105" height="32" class="btn"/>
+      <text x="432.5" y="257.5" class="text-btn">RESENO</text>
+    </g>
+
+    <!-- Paginacija -->
+    <g transform="translate(25, 485)">
+      <rect x="0" y="0" width="70" height="28" class="btn"/>
+      <text x="35" y="14" class="text-btn">PREJ</text>
+
+      <text x="250" y="14" class="text-label" text-anchor="middle">1 OD 5</text>
+
+      <rect x="430" y="0" width="70" height="28" class="btn"/>
+      <text x="465" y="14" class="text-btn">DALJE</text>
+    </g>
+  </g>
+
+  <!-- DESNI DEL: LESTVICA -->
+  <g transform="translate(590, 80)">
+    <rect x="0" y="0" width="390" height="540" class="box"/>
+    <text x="25" y="30" class="text-label">LESTVICA</text>
+
+    <!-- Zavihka -->
+    <g transform="translate(25, 55)">
+      <rect x="0" y="0" width="165" height="30" class="btn-dark"/>
+      <text x="82.5" y="15" class="text-btn-white">DANES</text>
+
+      <rect x="175" y="0" width="165" height="30" class="btn"/>
+      <text x="257.5" y="15" class="text-btn">NIZ</text>
+    </g>
+
+    <!-- Poenostavljena tabela brez podrobnih številk -->
+    <g transform="translate(25, 105)">
+      <!-- Glava tabele -->
+      <text x="20" y="15" class="text-label">MESTO</text>
+      <text x="90" y="15" class="text-label">UPORABNIK</text>
+      <line x1="0" y1="28" x2="340" y2="28" class="line"/>
+
+      <!-- Vrstica 1 -->
+      <g transform="translate(0, 35)">
+        <text x="35" y="18" class="text-title">1</text>
+        <text x="90" y="18" class="text-body">ANA</text>
+        <line x1="190" y1="18" x2="320" y2="18" class="line"/>
+        <line x1="0" y1="36" x2="340" y2="36" class="line-light"/>
+      </g>
+
+      <!-- Vrstica 2 -->
+      <g transform="translate(0, 75)">
+        <text x="35" y="18" class="text-title">2</text>
+        <text x="90" y="18" class="text-body">MARKO</text>
+        <line x1="190" y1="18" x2="320" y2="18" class="line"/>
+        <line x1="0" y1="36" x2="340" y2="36" class="line-light"/>
+      </g>
+
+      <!-- Vrstica 3 -->
+      <g transform="translate(0, 115)">
+        <text x="35" y="18" class="text-title">3</text>
+        <text x="90" y="18" class="text-body">TILEN</text>
+        <line x1="190" y1="18" x2="320" y2="18" class="line"/>
+        <line x1="0" y1="36" x2="340" y2="36" class="line-light"/>
+      </g>
+
+      <!-- Vrstica 4 -->
+      <g transform="translate(0, 155)">
+        <text x="35" y="18" class="text-title">4</text>
+        <text x="90" y="18" class="text-body">LUKA</text>
+        <line x1="190" y1="18" x2="320" y2="18" class="line"/>
+        <line x1="0" y1="36" x2="340" y2="36" class="line-light"/>
+      </g>
+
+      <!-- Vrstica 5 -->
+      <g transform="translate(0, 195)">
+        <text x="35" y="18" class="text-title">5</text>
+        <text x="90" y="18" class="text-body">MAJA</text>
+        <line x1="190" y1="18" x2="320" y2="18" class="line"/>
+        <line x1="0" y1="36" x2="340" y2="36" class="line-light"/>
+      </g>
+
+      <!-- Vrstica uporabnika -->
+      <g transform="translate(0, 245)">
+        <rect x="0" y="0" width="340" height="38" class="box-highlight"/>
+        <text x="35" y="19" class="text-title">8</text>
+        <text x="90" y="19" class="text-title" text-anchor="start">TI</text>
+        <line x1="190" y1="19" x2="320" y2="19" class="line"/>
+      </g>
+    </g>
+  </g>
+</svg>

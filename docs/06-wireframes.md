@@ -2,7 +2,7 @@
 
 Dokument vsebuje vizualne žične modele (wireframes), ki prikazujejo razporeditev elementov, informacijsko arhitekturo in uporabniško izkušnjo spletne aplikacije REDACTED. 
 
-Vsi žični modeli so izdelani kot preprosti, shematski osnutki v vektorskem formatu SVG in so shranjeni v mapi `docs/images/`.
+Vsi žični modeli so izdelani kot preprosti, shematski osnutki v formatu PNG in vektorskem formatu SVG ter so shranjeni v mapi `docs/wireframes/`.
 
 ---
 
@@ -10,7 +10,7 @@ Vsi žični modeli so izdelani kot preprosti, shematski osnutki v vektorskem for
 
 Glavni zaslon predstavlja osrednje okolje, v katerem igralec preživi največ časa pri reševanju dnevnega izziva.
 
-![Glavni igralni zaslon](./images/wireframe-01-glavni-zaslon.svg)
+![Glavni igralni zaslon](./wireframes/WF-01-glavni-zaslon.png)
 
 ### Opis in ključni elementi zaslona:
 * **Zgornja vrstica (Glava):**
@@ -37,7 +37,7 @@ Glavni zaslon predstavlja osrednje okolje, v katerem igralec preživi največ č
 
 Zaslon se samodejno odpre ob zmagi, ko igralec uspešno ugotovi skriti naslov članka.
 
-![Zaključek igre in statistika](./images/wireframe-02-zmaga-in-statistika.svg)
+![Zaključek igre in statistika](./wireframes/WF-02-zmaga-in-statistika.png)
 
 ### Opis in ključni elementi zaslona:
 * **Ozadje:** Glavni igralni zaslon v ozadju je zamegljen.
@@ -62,7 +62,7 @@ Zaslon se samodejno odpre ob zmagi, ko igralec uspešno ugotovi skriti naslov č
 
 Zaslon omogoča urednikom in administratorjem uvoz in razporejanje novih enciklopedičnih člankov.
 
-![Uredniški vmesnik](./images/wireframe-03-uredniski-vmesnik.svg)
+![Uredniški vmesnik](./wireframes/WF-03-uredniski-vmesnik.png)
 
 ### Opis in ključni elementi zaslona:
 * **Zgornja vrstica:** Oznaka UREDNIK, status ADMIN ter gumb ODJAVA.
@@ -85,7 +85,7 @@ Zaslon omogoča urednikom in administratorjem uvoz in razporejanje novih enciklo
 
 Zaslon združuje pregled vseh preteklih izzivov in lestvico najboljših igralcev.
 
-![Arhiv ugank in lestvica](./images/wireframe-04-arhiv-in-lestvica.svg)
+![Arhiv ugank in lestvica](./wireframes/WF-04-arhiv-in-lestvica.png)
 
 ### Opis in ključni elementi zaslona:
 * **Leva stran — Zgodovinski arhiv:**

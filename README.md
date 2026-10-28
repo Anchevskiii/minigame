@@ -1,68 +1,61 @@
-# [REDACTED] — Classified Daily Word Deduction Game
+# [REDACTED] — Spletna igra z ugibanjem cenzuriranih besedil
 
-A daily, global browser-based word puzzle where players deduce the confidential subject of a heavily censored English Wikipedia article by guessing words to declassify the document.
+Spletna igra z besedami, kjer igralci postopoma razkrivajo cenzuriran enciklopedični članek (Wikipedia) in z logičnim sklepanjem ugotavljajo naslov oziroma glavno temo članka.
 
 ---
 
-## 🚀 Quick Start
+## 🛠️ Uporabljene tehnologije
 
-### 1. Install Dependencies
-```bash
-npm install
+| Področje | Tehnologija |
+| :--- | :--- |
+| **Frontend** | React, TypeScript, Vite |
+| **Oblikovanje** | Tailwind CSS |
+| **Backend API** | Node.js, Express, TypeScript |
+| **Podatkovna baza** | PostgreSQL (Supabase) |
+| **Dostop do baze (ORM)** | Prisma ORM |
+| **Avtentikacija** | Supabase Auth (JWT) |
+
+---
+
+## 📁 Struktura repozitorija
+
+```text
+├── frontend/       # Uporabniški vmesnik (React + Vite)
+├── backend/        # Zaledni strežnik (Express API)
+└── docs/           # Projektna dokumentacija
+    ├── wireframes/ # Žični modeli (WF-01 do WF-04)
+    └── adr/        # Arhitekturne odločitve (MADR zapisi)
 ```
 
-### 2. Start Local Development Server
+---
+
+## 📚 Projektna dokumentacija
+
+1. [01 - Zasnova rešitve](docs/01-zasnova-resitve.md)
+2. [02 - Funkcionalnosti in obseg](docs/02-funkcionalnosti-in-obseg.md)
+3. [03 - Podatkovni model](docs/03-podatkovni-model.md)
+4. [04 - Arhitektura in tehnološki sklad](docs/04-arhitektura-in-tehnoloski-sklad.md)
+5. [05 - Uporabniške zgodbe](docs/05-uporabniske-zgodbe.md)
+6. [06 - Žični modeli](docs/06-wireframes.md)
+
+### Arhitekturne odločitve (ADR)
+* [Predloga MADR](docs/adr/adr-template.md)
+* [ADR 0001: Izbira Supabase za bazo in avtentikacijo](docs/adr/0001-izbira-supabase-za-bazo-in-avtentikacijo.md)
+* [ADR 0002: Uporaba Prisma ORM za dostop do baze](docs/adr/0002-uporaba-prisma-orm.md)
+* [ADR 0003: Preverjanje ugibanj na strežniku](docs/adr/0003-streznisko-preverjanje-ugibanj.md)
+* [ADR 0004: Uporaba TypeScript na celotnem skladu](docs/adr/0004-uporaba-typescript-na-celotnem-skladu.md)
+* [ADR 0005: Izbira Tailwind CSS za uporabniški vmesnik](docs/adr/0005-izbira-tailwind-css-za-uporabniski-vmesnik.md)
+* [ADR 0006: Uporaba PostgreSQL ENUM tipov](docs/adr/0006-uporaba-postgresql-enum-tipov.md)
+
+---
+
+## 🚀 Lokalni zagon
+
 ```bash
+# Namestitev odvisnosti
+npm install
+
+# Zagon razvojnega strežnika
 npm run dev
 ```
-Open [http://localhost:5173/](http://localhost:5173/) in your browser.
-
-### 3. Generate Daily Puzzles from Wikipedia
-To fetch and compile new Wikipedia Vital/Featured articles into structured token puzzles:
-```bash
-npm run build-puzzles
-```
-This fetches selected articles (e.g. *Albert Einstein*, *Gravity*, *Photosynthesis*, *The Beatles*, *Pyramid*), parses lead sections, pre-reveals stop words, calculates word stems, and compiles static JSON assets into `public/puzzles/`.
-
-### 4. Run Logic & Architecture Tests
-```bash
-node --experimental-strip-types scripts/test-game-logic.mjs
-```
-
-### 5. Build Production Bundle
-```bash
-npm run build
-```
-
----
-
-## 🎮 Key Features & Mechanics
-
-- **Authentic Classified Government Dossier UI:**
-  - Typewriter typography (`Special Elite`, `Courier Prime`, `Newsreader`).
-  - Redaction blocks `██████` matching exact word length.
-  - Three visual themes: **Classified Parchment (Light)**, **Charcoal Noir (Dark)**, and **CRT Terminal Phosphor (Green)**.
-  - Web Audio API synthesizer for mechanical typewriter clacks and reveal chimes.
-- **Smart Guessing (Lemmatization & Normalization):**
-  - Built-in zero-dependency English Porter stemmer: guessing `ACT` automatically reveals `ACTS`, `ACTING`, and `ACTED`.
-- **Global Synchronization:**
-  - Resets globally at **00:00 UTC** with live countdown timer.
-- **Tiered Hint System:**
-  - **Tier 1 (Free Hint):** Deploys a reconnaissance intercept to reveal a high-frequency context keyword.
-  - **Tier 2 (Rewarded Ad Hint):** Interactive classified satellite broadcast simulation that declassifies a protected Title word.
-- **Endgame & Virality:**
-  - Declassification unveil animation & confetti explosion.
-  - One-click spoiler-free emoji share card for Twitter/X, Reddit, and WhatsApp.
-- **Historical Archive & SaaS Model:**
-  - Play past daily puzzles with the Field Operative Archive Pass ($2.99/mo simulation).
-- **Privacy & GDPR Compliance (Articles 17 & 20):**
-  - Zero third-party tracker cookies.
-  - **Export Dossier:** 1-click JSON export of career statistics and guess logs.
-  - **Purge Dossier:** Soft-delete / complete reset of local data.
-
----
-
-## 🏛️ Technical Architecture Plan
-
-The full production architecture, database schema (PostgreSQL DDL), edge CDN caching strategy, and GDPR evaluations are documented in:
-👉 `C:\Users\ancev\.gemini\antigravity-ide\brain\9b9ce1c7-a55d-4e86-aa69-7b1e3668722b\technical_architecture_plan.md`
+Aplikacija bo dostopna na `http://localhost:5173`.
