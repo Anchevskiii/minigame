@@ -50,23 +50,15 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="JAVNA LESTVICA NAJBOLJŠIH IGRALCEV"
+      title="LESTVICA"
       icon={<Trophy size={22} color="var(--accent-gold)" />}
     >
-      {/* US-09 AC #4 & WF-04: Preklop med dnevnimi rezultati (DANES) in najdaljšimi nizi (NIZ) */}
+      {/* WF-04: Dva zavihka: DANES in NIZ */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
         <button
           type="button"
-          className="icon-btn"
-          style={{
-            width: '100%',
-            height: 40,
-            gap: 6,
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.8rem',
-            background: tab === 'daily' ? 'var(--text-primary)' : 'var(--bg-card)',
-            color: tab === 'daily' ? 'var(--bg-card)' : 'var(--text-primary)'
-          }}
+          className={tab === 'daily' ? 'wf-btn-dark' : 'wf-btn'}
+          style={{ width: '100%', height: 38 }}
           onClick={() => {
             soundFX.playKeypress();
             setTab('daily');
@@ -77,38 +69,30 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
 
         <button
           type="button"
-          className="icon-btn"
-          style={{
-            width: '100%',
-            height: 40,
-            gap: 6,
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.8rem',
-            background: tab === 'streak' ? 'var(--text-primary)' : 'var(--bg-card)',
-            color: tab === 'streak' ? 'var(--bg-card)' : 'var(--text-primary)'
-          }}
+          className={tab === 'streak' ? 'wf-btn-dark' : 'wf-btn'}
+          style={{ width: '100%', height: 38 }}
           onClick={() => {
             soundFX.playKeypress();
             setTab('streak');
           }}
         >
-          <Flame size={15} /> NAJDALJŠI NIZ (STREAK)
+          <Flame size={15} /> NIZ
         </button>
       </div>
 
-      {/* US-09 AC #1, #2, #3: Tabela z razvrstitvijo in barvno poudarjeno vrstico prijavljenega uporabnika */}
-      <div className="classified-card" style={{ padding: 0, overflow: 'hidden', marginBottom: 0 }}>
+      {/* WF-04: Tabela z razvrstitvijo po mestu in uporabniku s poudarjeno vrstico TI */}
+      <div className="wf-box" style={{ padding: 0, overflow: 'hidden', marginBottom: 0 }}>
         <div
           style={{
             display: 'grid',
             gridTemplateColumns:
-              tab === 'daily' ? '50px 1fr 80px 90px 75px' : '50px 1fr 95px 95px 80px',
-            padding: '10px 12px',
+              tab === 'daily' ? '60px 1fr 80px 90px 75px' : '60px 1fr 95px 95px 80px',
+            padding: '10px 14px',
             background: 'var(--bg-surface)',
-            borderBottom: '1px solid var(--border-color)',
+            borderBottom: '1.5px solid var(--border-color)',
             fontFamily: 'var(--font-mono)',
             fontSize: '0.72rem',
-            fontWeight: 700,
+            fontWeight: 800,
             color: 'var(--text-secondary)'
           }}
         >
@@ -141,36 +125,36 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
             return (
               <div
                 key={`${tab}-${entry.userId}`}
+                className={isHighlighted ? 'wf-box-highlight' : ''}
                 style={{
                   display: 'grid',
                   gridTemplateColumns:
-                    tab === 'daily' ? '50px 1fr 80px 90px 75px' : '50px 1fr 95px 95px 80px',
-                  padding: '10px 12px',
-                  borderBottom: '1px solid var(--border-color)',
+                    tab === 'daily' ? '60px 1fr 80px 90px 75px' : '60px 1fr 95px 95px 80px',
+                  padding: '10px 14px',
+                  borderBottom: isHighlighted ? undefined : '1px solid var(--border-color)',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.82rem',
                   alignItems: 'center',
-                  background: isHighlighted ? 'var(--accent-hit-light)' : 'transparent',
-                  borderLeft: isHighlighted ? '4px solid var(--accent-hit)' : 'none',
-                  fontWeight: isHighlighted ? 700 : 500
+                  fontWeight: isHighlighted ? 800 : 500,
+                  margin: isHighlighted ? '4px 6px' : 0
                 }}
               >
                 <span>#{entry.rank}</span>
                 <span>
-                  {entry.username}{' '}
+                  {isHighlighted ? 'TI' : entry.username}{' '}
                   {isHighlighted && (
-                    <span style={{ fontSize: '0.7rem', color: 'var(--accent-hit)' }}>(VI)</span>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--accent-gold)' }}>({entry.username})</span>
                   )}
                 </span>
                 {tab === 'daily' ? (
                   <>
-                    <span style={{ textAlign: 'right' }}>{entry.guessesCount}</span>
+                    <span style={{ textAlign: 'right', fontWeight: 700 }}>{entry.guessesCount}</span>
                     <span style={{ textAlign: 'right' }}>{entry.accuracyPercentage}%</span>
                     <span style={{ textAlign: 'right' }}>{formatSeconds(entry.durationSeconds)}</span>
                   </>
                 ) : (
                   <>
-                    <span style={{ textAlign: 'right', color: 'var(--accent-gold)', fontWeight: 700 }}>
+                    <span style={{ textAlign: 'right', color: 'var(--accent-gold)', fontWeight: 800 }}>
                       {entry.currentStreak} 🔥
                     </span>
                     <span style={{ textAlign: 'right' }}>{entry.maxStreak} dni</span>

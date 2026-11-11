@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle, Lightbulb } from 'lucide-react';
 import { soundFX } from '@/utils/audio';
 import { calculateAccuracy } from '@/utils/game-rules';
 import { StatsRibbon } from '@/components/input/StatsRibbon';
@@ -141,7 +141,8 @@ export const InputBar: React.FC<InputBarProps> = ({
 
           <button
             type="submit"
-            className="btn-guess"
+            className="wf-btn-dark"
+            style={{ height: 46, padding: '0 22px', fontSize: '0.85rem' }}
             disabled={(!inputValue.trim() && focusedMatchCount <= 1) || isWon || disabled}
           >
             {isWon ? (
@@ -149,11 +150,27 @@ export const InputBar: React.FC<InputBarProps> = ({
             ) : isNextHitAction ? (
               <span>NASLEDNJI ↷</span>
             ) : (
-              <Send size={18} />
+              <Send size={16} />
             )}
-            <span style={{ marginLeft: 6 }}>
+            <span style={{ marginLeft: 4 }}>
               {isWon ? 'REŠENO' : isNextHitAction ? '' : 'UGIBAJ'}
             </span>
+          </button>
+
+          {/* WF-01: Gumb NAMIG desno ob gumbu UGIBAJ */}
+          <button
+            type="button"
+            className="wf-btn"
+            style={{ height: 46, padding: '0 16px', fontSize: '0.82rem' }}
+            onClick={() => {
+              soundFX.playKeypress();
+              onOpenHints();
+            }}
+            disabled={isWon || disabled}
+            title="Dostop do pomoči (NAMIG)"
+          >
+            <Lightbulb size={16} />
+            <span>NAMIG</span>
           </button>
         </form>
       </div>

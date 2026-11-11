@@ -817,6 +817,134 @@ body::before {
   background: #1b5e20;
 }
 
+/* ============================================================================
+   ŽIČNI MODELI (WIREFRAMES) UTILITY RAZREDI (WF-01 do WF-04)
+   ============================================================================ */
+
+.wf-box {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.wf-box-highlight {
+  background: var(--bg-surface);
+  border: 1.5px dashed var(--text-primary);
+  border-radius: 4px;
+}
+
+.wf-btn {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1.5px solid var(--border-color);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.wf-btn:hover:not(:disabled) {
+  background: var(--bg-card);
+  border-color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.wf-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.wf-btn-dark {
+  background: var(--text-primary);
+  color: var(--bg-card);
+  border: 1.5px solid var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.wf-btn-dark:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.wf-btn-dark:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.wf-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.wf-title {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+/* Header Action Buttons according to WF-01 */
+.wf-nav-btn {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1.5px solid var(--border-color);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.wf-nav-btn:hover {
+  background: var(--bg-card);
+  border-color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.wf-nav-btn.wf-nav-btn-active {
+  background: var(--text-primary);
+  color: var(--bg-card);
+  border-color: var(--text-primary);
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;

@@ -66,12 +66,23 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <span className="redacted-box">[REDACTED]</span>
           </div>
-          <span className="puzzle-badge" title={`Datum UTC: ${releaseDateUtc}`}>
-            DAN #{puzzleNumber}
+          <span
+            className="wf-box"
+            style={{
+              padding: '4px 10px',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.8rem',
+              fontWeight: 800,
+              letterSpacing: '1px'
+            }}
+            title={`Datum UTC: ${releaseDateUtc}`}
+          >
+            DAN {puzzleNumber}
           </span>
         </div>
 
         <div className="header-actions">
+          {/* Mobilni preklop stranske vrstice */}
           <button
             className={`icon-btn ${isSidebarMobileOpen ? 'active' : ''}`}
             onClick={onToggleSidebarMobile}
@@ -81,56 +92,60 @@ export const Header: React.FC<HeaderProps> = ({
             <List size={18} />
           </button>
 
+          {/* WF-01: Navigacijski gumbi z besedilom */}
           <button
-            className="icon-btn"
-            onClick={onToggleSound}
-            title={soundEnabled ? 'Izklopi zvok tipkanja' : 'Vklopi zvok tipkanja'}
-            aria-label="Zvok"
-          >
-            {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
-          </button>
-
-          <button
-            className="icon-btn"
+            className="wf-nav-btn"
             onClick={() => {
               soundFX.playKeypress();
-              onOpenArchive();
+              onOpenHowToPlay();
             }}
-            title="Zgodovinski arhiv ugank (US-08)"
-            aria-label="Arhiv"
+            title="Pravila igre (US-01)"
           >
-            <FolderArchive size={18} />
+            <HelpCircle size={15} />
+            <span className="hidden sm:inline">PRAVILA</span>
           </button>
 
-          {onOpenLeaderboard && (
-            <button
-              className="icon-btn"
-              onClick={() => {
-                soundFX.playKeypress();
-                onOpenLeaderboard();
-              }}
-              title="Lestvica najboljših igralcev (US-09)"
-              aria-label="Lestvica"
-            >
-              <Trophy size={18} />
-            </button>
-          )}
-
           <button
-            className="icon-btn"
+            className="wf-nav-btn"
             onClick={() => {
               soundFX.playKeypress();
               onOpenStats();
             }}
             title="Osebna statistika in dosežki (US-12, US-14)"
-            aria-label="Statistika"
           >
-            <BarChart2 size={18} />
+            <BarChart2 size={15} />
+            <span className="hidden sm:inline">STATISTIKA</span>
           </button>
+
+          <button
+            className="wf-nav-btn"
+            onClick={() => {
+              soundFX.playKeypress();
+              onOpenArchive();
+            }}
+            title="Zgodovinski arhiv ugank (US-08)"
+          >
+            <FolderArchive size={15} />
+            <span className="hidden sm:inline">ARHIV</span>
+          </button>
+
+          {onOpenLeaderboard && (
+            <button
+              className="wf-nav-btn"
+              onClick={() => {
+                soundFX.playKeypress();
+                onOpenLeaderboard();
+              }}
+              title="Lestvica najboljših igralcev (US-09)"
+            >
+              <Trophy size={15} />
+              <span className="hidden md:inline">LESTVICA</span>
+            </button>
+          )}
 
           {canAccessEditor && onOpenEditorAdmin && (
             <button
-              className="icon-btn"
+              className="wf-nav-btn"
               style={{
                 borderColor: 'var(--accent-gold)',
                 color: 'var(--accent-gold)'
@@ -140,57 +155,25 @@ export const Header: React.FC<HeaderProps> = ({
                 onOpenEditorAdmin();
               }}
               title="Konzola urednika in administratorja (US-10, US-11, US-15)"
-              aria-label="Urednik in Admin"
             >
-              <Shield size={18} />
+              <Shield size={15} />
+              <span className="hidden md:inline">UREDNIK</span>
             </button>
           )}
 
-          <button
-            className="icon-btn"
-            onClick={() => {
-              soundFX.playKeypress();
-              onOpenHowToPlay();
-            }}
-            title="Pravila igre"
-            aria-label="Pravila"
-          >
-            <HelpCircle size={18} />
-          </button>
-
-          <button
-            className="icon-btn"
-            onClick={() => {
-              soundFX.playKeypress();
-              onOpenSettings();
-            }}
-            title="Nastavitve teme in zvoka (US-13)"
-            aria-label="Nastavitve"
-          >
-            <Settings size={18} />
-          </button>
-
-          {/* US-06 AC #4: Po uspešni prijavi se v glavi strani namesto gumba za prijavo izpiše uporabniško ime ter gumb za odjavo */}
+          {/* WF-01: Uporabniški PROFIL / PRIJAVA */}
           {user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span
-                className="puzzle-badge"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  background: 'var(--bg-surface)',
-                  color: 'var(--text-primary)'
-                }}
+                className="wf-nav-btn wf-nav-btn-active"
                 title={`Prijavljen kot ${user.username} (${user.role})`}
               >
-                <User size={13} />
-                {user.username}
+                <User size={14} />
+                <span>{user.username}</span>
               </span>
               <button
                 type="button"
-                className="icon-btn"
-                style={{ width: 'auto', padding: '0 8px', fontSize: '0.75rem', gap: 4 }}
+                className="wf-nav-btn"
                 onClick={() => {
                   soundFX.playKeypress();
                   onLogout?.();
@@ -198,33 +181,50 @@ export const Header: React.FC<HeaderProps> = ({
                 title="Odjava"
                 aria-label="Odjava"
               >
-                <LogOut size={15} />
+                <LogOut size={14} />
               </button>
             </div>
           ) : (
             onOpenAuth && (
               <button
                 type="button"
-                className="icon-btn"
-                style={{
-                  width: 'auto',
-                  padding: '0 10px',
-                  fontSize: '0.75rem',
-                  fontFamily: 'var(--font-mono)',
-                  fontWeight: 700,
-                  gap: 5
-                }}
+                className="wf-btn-dark"
+                style={{ height: 34, padding: '0 12px', fontSize: '0.74rem' }}
                 onClick={() => {
                   soundFX.playKeypress();
                   onOpenAuth();
                 }}
-                title="Prijava ali registracija (US-06)"
+                title="Prijava v profil (US-06)"
               >
-                <User size={15} />
-                <span>PRIJAVA</span>
+                <User size={14} />
+                <span>PROFIL</span>
               </button>
             )
           )}
+
+          {/* Nastavitve in zvok */}
+          <button
+            className="icon-btn"
+            style={{ width: 34, height: 34 }}
+            onClick={onToggleSound}
+            title={soundEnabled ? 'Izklopi zvok tipkanja' : 'Vklopi zvok tipkanja'}
+            aria-label="Zvok"
+          >
+            {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+          </button>
+
+          <button
+            className="icon-btn"
+            style={{ width: 34, height: 34 }}
+            onClick={() => {
+              soundFX.playKeypress();
+              onOpenSettings();
+            }}
+            title="Nastavitve teme in zvoka (US-13)"
+            aria-label="Nastavitve"
+          >
+            <Settings size={16} />
+          </button>
         </div>
       </header>
     </>

@@ -7,13 +7,15 @@ interface GuessLogRowProps {
   isActive: boolean;
   currentMatchIndex: number;
   onSelectWord: (word: string) => void;
+  orderNumber?: number;
 }
 
 export const GuessLogRow: React.FC<GuessLogRowProps> = ({
   item,
   isActive,
   currentMatchIndex,
-  onSelectWord
+  onSelectWord,
+  orderNumber
 }) => {
   const getRowTitle = () => {
     if (item.hits > 1 && isActive) {
@@ -52,8 +54,13 @@ export const GuessLogRow: React.FC<GuessLogRowProps> = ({
       }}
       title={getRowTitle()}
     >
-      <span className="guess-word">
-        {item.word}
+      <span className="guess-word" style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0.5px' }}>
+        {orderNumber ? (
+          <span style={{ marginRight: 8, opacity: 0.65, fontWeight: 700 }}>
+            {orderNumber}
+          </span>
+        ) : null}
+        {item.word.toUpperCase()}
         {item.isTitleHit && (
           <span
             style={{

@@ -5,7 +5,6 @@ import {
   ExternalLink,
   Check,
   Flame,
-  Award,
   FolderArchive,
   BarChart2,
   Clock
@@ -88,39 +87,29 @@ Niz zmag: ${currentStreak} 🔥`;
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="ČESTITKE — DOKUMENT DEKLASIFICIRAN!"
-      icon={<Trophy size={24} color="#ffd700" />}
+      title="ČESTITKE"
+      icon={<Trophy size={22} color="var(--accent-gold)" />}
     >
-      <div style={{ textAlign: 'center', margin: '12px 0 20px 0' }}>
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-            background: 'var(--text-stamp)',
-            color: '#ffffff',
-            padding: '4px 14px',
-            borderRadius: '4px',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.78rem',
-            letterSpacing: '2px',
-            marginBottom: '10px'
-          }}
-        >
-          <Award size={14} /> SKRITI NASLOV ČLANKA RAZKRIT
+      <div style={{ textAlign: 'center', margin: '4px 0 16px 0' }}>
+        <div className="wf-label" style={{ marginBottom: 6 }}>
+          UGANJENO GESLO
         </div>
 
-        <h2
+        <div
+          className="wf-box"
           style={{
+            padding: '12px 16px',
             fontFamily: 'var(--font-typewriter)',
-            fontSize: '1.85rem',
+            fontSize: '1.65rem',
+            fontWeight: 800,
             color: 'var(--text-primary)',
             textTransform: 'uppercase',
-            letterSpacing: '2px'
+            letterSpacing: '2px',
+            marginBottom: '8px'
           }}
         >
-          »{articleTitle}«
-        </h2>
+          {articleTitle}
+        </div>
 
         {wikipediaUrl && (
           <a
@@ -131,9 +120,8 @@ Niz zmag: ${currentStreak} 🔥`;
               display: 'inline-flex',
               alignItems: 'center',
               gap: 4,
-              fontSize: '0.84rem',
+              fontSize: '0.8rem',
               color: 'var(--text-secondary)',
-              marginTop: '6px',
               textDecoration: 'underline'
             }}
           >
@@ -142,72 +130,73 @@ Niz zmag: ${currentStreak} 🔥`;
         )}
       </div>
 
-      {/* WF-02 & US-05 AC #2: Mreža 4 ključnih metrik (Poskusi, Natančnost, Čas, Namigi) */}
+      {/* WF-02: Mreža 4 ključnih metrik (Poskusi, Odstotkov, Čas, Namigi) */}
       <div
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(4, 1fr)',
           gap: '8px',
-          marginBottom: '16px'
+          marginBottom: '14px'
         }}
       >
-        <div className="classified-card" style={{ textAlign: 'center', padding: '10px 4px', margin: 0 }}>
-          <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+        <div className="wf-box" style={{ textAlign: 'center', padding: '10px 4px' }}>
+          <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)' }}>
             {totalGuesses}
           </div>
-          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          <div className="wf-label" style={{ fontSize: '0.66rem', marginTop: 2 }}>
             POSKUSI
           </div>
         </div>
 
-        <div className="classified-card" style={{ textAlign: 'center', padding: '10px 4px', margin: 0 }}>
-          <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--accent-hit)' }}>
+        <div className="wf-box" style={{ textAlign: 'center', padding: '10px 4px' }}>
+          <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--accent-hit)' }}>
             {accuracy}%
           </div>
-          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            NATANČNOST
+          <div className="wf-label" style={{ fontSize: '0.66rem', marginTop: 2 }}>
+            ODSTOTKOV
           </div>
         </div>
 
-        <div className="classified-card" style={{ textAlign: 'center', padding: '10px 4px', margin: 0 }}>
-          <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+        <div className="wf-box" style={{ textAlign: 'center', padding: '10px 4px' }}>
+          <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)' }}>
             {formattedTime}
           </div>
-          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          <div className="wf-label" style={{ fontSize: '0.66rem', marginTop: 2 }}>
             ČAS
           </div>
         </div>
 
-        <div className="classified-card" style={{ textAlign: 'center', padding: '10px 4px', margin: 0 }}>
-          <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--accent-gold)' }}>
+        <div className="wf-box" style={{ textAlign: 'center', padding: '10px 4px' }}>
+          <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--accent-gold)' }}>
             {hintsUsed}
           </div>
-          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          <div className="wf-label" style={{ fontSize: '0.66rem', marginTop: 2 }}>
             NAMIGI
           </div>
         </div>
       </div>
 
-      {/* WF-02: Dnevni niz (Streak) */}
+      {/* WF-02: Dnevni niz */}
       <div
-        className="classified-card"
+        className="wf-box"
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           padding: '10px 14px',
-          marginBottom: '12px'
+          marginBottom: '10px'
         }}
       >
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', fontWeight: 700 }}>
-          DNEVNI NIZ ZMAG:
+        <span className="wf-title" style={{ fontSize: '0.8rem' }}>
+          DNEVNI NIZ
         </span>
         <span
           style={{
             display: 'inline-flex',
             alignItems: 'center',
             gap: 4,
-            fontWeight: 700,
+            fontWeight: 800,
+            fontSize: '1.1rem',
             color: 'var(--accent-gold)',
             fontFamily: 'var(--font-mono)'
           }}
@@ -216,75 +205,45 @@ Niz zmag: ${currentStreak} 🔥`;
         </span>
       </div>
 
-      {/* US-12 AC #3 & WF-02: Obvestilo o osvojenih dosežkih */}
+      {/* WF-02: Novi dosežek */}
       {unlockedAchievements.length > 0 && (
         <div
-          className="classified-card"
+          className="wf-box-highlight"
           style={{
-            borderColor: 'var(--accent-gold)',
-            background: 'var(--bg-surface)',
-            marginBottom: '12px'
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '10px 14px',
+            marginBottom: '10px'
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              color: 'var(--accent-gold)',
-              marginBottom: 4
-            }}
-          >
-            <Award size={16} /> ODKLENJEN POSEBEN DOSEŽEK:
-          </div>
-          {unlockedAchievements.map(ach => (
-            <div key={ach.code} style={{ fontSize: '0.85rem', fontWeight: 700 }}>
-              🏅 {ach.title} — <span style={{ fontWeight: 400 }}>{ach.description}</span>
-            </div>
-          ))}
+          <span className="wf-title" style={{ fontSize: '0.8rem' }}>
+            NOVI DOSEŽEK
+          </span>
+          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+            {unlockedAchievements.map(a => a.title).join(', ')}
+          </span>
         </div>
       )}
 
-      {/* Predogled besedila za deljenje */}
-      <div
-        style={{
-          background: 'var(--bg-surface)',
-          padding: '10px 12px',
-          borderRadius: '4px',
-          border: '1px dashed var(--border-color)',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.82rem',
-          whiteSpace: 'pre-wrap',
-          color: 'var(--text-primary)'
-        }}
+      {/* Gumb DELI REZULTAT po WF-02 */}
+      <button
+        type="button"
+        className="wf-btn-dark"
+        style={{ width: '100%', height: 44, fontSize: '0.88rem', marginTop: 6 }}
+        onClick={handleCopyShare}
       >
-        {generateShareText()}
-      </div>
-
-      {/* US-05 AC #3 & #4: Gumb »Deli rezultat« z jasno vizualno potrditvijo */}
-      <button type="button" className="btn-share" onClick={handleCopyShare}>
         {copied ? <Check size={18} /> : <Share2 size={18} />}
-        <span>
-          {copied ? 'Rezultat skopiran v odložišče!' : 'DELI REZULTAT'}
-        </span>
+        <span>{copied ? 'REZULTAT SKOPIRAN!' : 'DELI REZULTAT'}</span>
       </button>
 
-      {/* WF-02: Navigacijska gumba za prehod na LESTVICO ali v ARHIV */}
+      {/* WF-02: Navigacijska gumba LESTVICA in ARHIV */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 10 }}>
         {onOpenLeaderboard && (
           <button
             type="button"
-            className="btn-share"
-            style={{
-              marginTop: 0,
-              background: 'var(--bg-surface)',
-              color: 'var(--text-primary)',
-              border: '1px solid var(--border-color)',
-              padding: '10px'
-            }}
+            className="wf-btn"
+            style={{ width: '100%', height: 40 }}
             onClick={() => {
               onClose();
               onOpenLeaderboard();
@@ -296,14 +255,8 @@ Niz zmag: ${currentStreak} 🔥`;
         {onOpenArchive && (
           <button
             type="button"
-            className="btn-share"
-            style={{
-              marginTop: 0,
-              background: 'var(--bg-surface)',
-              color: 'var(--text-primary)',
-              border: '1px solid var(--border-color)',
-              padding: '10px'
-            }}
+            className="wf-btn"
+            style={{ width: '100%', height: 40 }}
             onClick={() => {
               onClose();
               onOpenArchive();
@@ -316,19 +269,18 @@ Niz zmag: ${currentStreak} 🔥`;
 
       {/* WF-02: Napotek o času naslednjega izziva */}
       <div
+        className="wf-label"
         style={{
           textAlign: 'center',
           marginTop: 14,
-          fontSize: '0.76rem',
-          color: 'var(--text-muted)',
-          fontFamily: 'var(--font-mono)',
+          fontSize: '0.72rem',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           gap: 6
         }}
       >
-        <Clock size={13} /> Naslednji dnevni izziv ob 00:00 UTC (čez {countdown})
+        <Clock size={13} /> NASLEDNJI IZZIV OB POLNOČI (00:00 UTC) // Čez {countdown}
       </div>
     </Modal>
   );
