@@ -12,7 +12,7 @@ export function createApp() {
   const app = express();
 
   applySecurityMiddleware(app);
-  app.use(express.json({ limit: '256kb' }));
+  app.use(express.json({ limit: '2mb' }));
   app.use('/api', apiRateLimiter);
 
   // Zdravstveni pregled strežnika
@@ -20,6 +20,7 @@ export function createApp() {
     res.json({
       status: 'ok',
       service: 'redacted-backend-api',
+      antiCheatMasking: true,
       databaseMode: store.isUsingDatabase() ? 'postgresql-prisma' : 'safe-local-hybrid'
     });
   });

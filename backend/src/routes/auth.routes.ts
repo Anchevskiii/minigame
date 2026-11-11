@@ -71,7 +71,7 @@ authRouter.post('/register', authRateLimiter, async (req: Request, res: Response
       }
     }
 
-    let userId = crypto.randomUUID();
+    let userId: string = crypto.randomUUID();
 
     // Če je nastavljen Supabase Auth, ustvari uporabnika tudi v auth.users
     if (isSupabaseConfigured() && supabaseAdmin) {

@@ -63,7 +63,11 @@ adminRouter.post(
           }
         });
         if (wikiRes.ok) {
-          const wikiData = await wikiRes.json();
+          const wikiData = (await wikiRes.json()) as {
+            query?: {
+              pages?: Record<string, { title?: string; extract?: string; missing?: boolean }>;
+            };
+          };
           const pages = wikiData?.query?.pages || {};
           const firstKey = Object.keys(pages)[0];
           const page = firstKey ? pages[firstKey] : null;
