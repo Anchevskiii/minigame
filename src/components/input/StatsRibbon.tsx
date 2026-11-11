@@ -32,13 +32,13 @@ export const StatsRibbon: React.FC<StatsRibbonProps> = ({
   return (
     <div className="stats-ribbon">
       <div className="stats-chips">
-        <span className="stat-chip">
+        <span className="wf-box" style={{ padding: '4px 10px', fontSize: '0.76rem', fontFamily: 'var(--font-mono)' }}>
           POSKUSI: <strong>{totalGuesses}</strong>
         </span>
-        <span className="stat-chip">
+        <span className="wf-box" style={{ padding: '4px 10px', fontSize: '0.76rem', fontFamily: 'var(--font-mono)' }}>
           ZADETKI: <strong>{hitGuesses}</strong>
         </span>
-        <span className="stat-chip">
+        <span className="wf-box" style={{ padding: '4px 10px', fontSize: '0.76rem', fontFamily: 'var(--font-mono)' }}>
           NATANČNOST: <strong>{accuracy}%</strong>
         </span>
 

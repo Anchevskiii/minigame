@@ -216,77 +216,65 @@ export const EditorAdminModal: React.FC<EditorAdminModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`KONZOLA UREDNIKA IN SKRBNIKA (${user?.role || 'EDITOR'})`}
+      title="UREDNIK"
       icon={<Shield size={22} color="var(--accent-gold)" />}
     >
-      {/* Navigacijska vrstica po WF-03: NOVA UGANKA | KOLEDAR & SEZNAM | UPORABNIKI (ADMIN) */}
+      {/* WF-03: Navigacijski meni (NOVA UGANKA, KOLEDAR, SEZNAM, UPORABNIKI) */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: user?.role === 'ADMIN' ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)',
-          gap: 8,
+          gridTemplateColumns: user?.role === 'ADMIN' ? 'repeat(4, 1fr)' : 'repeat(3, 1fr)',
+          gap: 6,
           marginBottom: 16
         }}
       >
         <button
           type="button"
-          className="icon-btn"
-          style={{
-            width: '100%',
-            height: 38,
-            gap: 6,
-            fontSize: '0.76rem',
-            fontFamily: 'var(--font-mono)',
-            background: activeView === 'new' ? 'var(--text-primary)' : 'var(--bg-card)',
-            color: activeView === 'new' ? 'var(--bg-card)' : 'var(--text-primary)'
-          }}
+          className={activeView === 'new' ? 'wf-btn-dark' : 'wf-btn'}
+          style={{ width: '100%', height: 36, fontSize: '0.74rem' }}
           onClick={() => {
             setActiveView('new');
             setStatusMsg(null);
           }}
         >
-          <Globe size={15} /> NOVA UGANKA (UVOZ)
+          <Globe size={14} /> NOVA UGANKA
         </button>
 
         <button
           type="button"
-          className="icon-btn"
-          style={{
-            width: '100%',
-            height: 38,
-            gap: 6,
-            fontSize: '0.76rem',
-            fontFamily: 'var(--font-mono)',
-            background: activeView === 'calendar' ? 'var(--text-primary)' : 'var(--bg-card)',
-            color: activeView === 'calendar' ? 'var(--bg-card)' : 'var(--text-primary)'
-          }}
+          className={activeView === 'calendar' ? 'wf-btn-dark' : 'wf-btn'}
+          style={{ width: '100%', height: 36, fontSize: '0.74rem' }}
           onClick={() => {
             setActiveView('calendar');
             setStatusMsg(null);
           }}
         >
-          <Calendar size={15} /> KOLEDAR IN SEZNAM
+          <Calendar size={14} /> KOLEDAR
+        </button>
+
+        <button
+          type="button"
+          className="wf-btn"
+          style={{ width: '100%', height: 36, fontSize: '0.74rem' }}
+          onClick={() => {
+            setActiveView('calendar');
+            setStatusMsg(null);
+          }}
+        >
+          <List size={14} /> SEZNAM
         </button>
 
         {user?.role === 'ADMIN' && (
           <button
             type="button"
-            className="icon-btn"
-            style={{
-              width: '100%',
-              height: 38,
-              gap: 6,
-              fontSize: '0.76rem',
-              fontFamily: 'var(--font-mono)',
-              background: activeView === 'users' ? 'var(--text-primary)' : 'var(--bg-card)',
-              color: activeView === 'users' ? 'var(--bg-card)' : 'var(--text-primary)'
-            }}
+            className={activeView === 'users' ? 'wf-btn-dark' : 'wf-btn'}
+            style={{ width: '100%', height: 36, fontSize: '0.74rem' }}
             onClick={() => {
               setActiveView('users');
               setStatusMsg(null);
             }}
           >
-            <Users size={15} /> UPORABNIKI IN VLOGE
+            <Users size={14} /> UPORABNIKI
           </button>
         )}
       </div>
@@ -316,10 +304,13 @@ export const EditorAdminModal: React.FC<EditorAdminModalProps> = ({
 
       {/* POGLED 1: WF-03 Osrednji vnosni obrazec v 3 korakih (1. Uvoz, 2. Nastavitve, 3. Predogled) */}
       {activeView === 'new' && (
-        <div>
-          <div className="classified-card">
-            <h4>KORAK 1: UVOZ ČLANKA IZ WIKIPEDIJE (US-10)</h4>
-            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {/* 1 UVOZ */}
+          <div className="wf-box" style={{ padding: '14px 16px' }}>
+            <div className="wf-label" style={{ marginBottom: 8 }}>
+              WIKIPEDIJA POVEZAVA
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
               <input
                 type="url"
                 className="guess-input-field"
@@ -330,8 +321,8 @@ export const EditorAdminModal: React.FC<EditorAdminModalProps> = ({
               />
               <button
                 type="button"
-                className="btn-guess"
-                style={{ height: 40, padding: '0 16px', fontSize: '0.82rem' }}
+                className="wf-btn-dark"
+                style={{ height: 40, padding: '0 20px', fontSize: '0.82rem' }}
                 disabled={loadingAction}
                 onClick={handleImportFromWikipedia}
               >
@@ -340,12 +331,12 @@ export const EditorAdminModal: React.FC<EditorAdminModalProps> = ({
             </div>
           </div>
 
-          <div className="classified-card">
-            <h4>KORAK 2: NASTAVITVE TEŽAVNOSTI IN DATUMA OBJAVE (US-11)</h4>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 8 }}>
+          {/* 2 NASTAVITVE */}
+          <div className="wf-box" style={{ padding: '14px 16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.72rem', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>
-                  NASLOV (GESLO)
+                <label className="wf-label" style={{ display: 'block', marginBottom: 6 }}>
+                  NASLOV
                 </label>
                 <input
                   type="text"
@@ -358,24 +349,24 @@ export const EditorAdminModal: React.FC<EditorAdminModalProps> = ({
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.72rem', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>
-                  TEŽAVNOST (ENUM)
+                <label className="wf-label" style={{ display: 'block', marginBottom: 6 }}>
+                  TEŽAVNOST
                 </label>
                 <select
                   className="sort-select"
-                  style={{ width: '100%', height: 38 }}
+                  style={{ width: '100%', height: 38, fontFamily: 'var(--font-mono)', fontWeight: 700 }}
                   value={difficulty}
                   onChange={e => setDifficulty(e.target.value as DifficultyLevel)}
                 >
-                  <option value="EASY">EASY (Lahka)</option>
-                  <option value="MEDIUM">MEDIUM (Srednja)</option>
-                  <option value="HARD">HARD (Težka)</option>
+                  <option value="EASY">LAHKA (EASY)</option>
+                  <option value="MEDIUM">SREDNJA (MEDIUM)</option>
+                  <option value="HARD">TEŽKA (HARD)</option>
                 </select>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.72rem', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>
-                  DATUM OBJAVE
+                <label className="wf-label" style={{ display: 'block', marginBottom: 6 }}>
+                  DATUM
                 </label>
                 <input
                   type="date"
@@ -388,57 +379,52 @@ export const EditorAdminModal: React.FC<EditorAdminModalProps> = ({
             </div>
           </div>
 
-          <div className="classified-card" style={{ marginBottom: 0 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h4 style={{ margin: 0 }}>KORAK 3: PREDOGLED GENERIRANE CENZURE</h4>
+          {/* 3 PREDOGLED BESEDILA */}
+          <div className="wf-box" style={{ padding: '14px 16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <div className="wf-label">PREDOGLED BESEDILA</div>
               {wordStats && (
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent-hit)' }}>
-                  Skupaj besed: <strong>{wordStats.totalWords}</strong> (Skritih: {wordStats.hiddenWords})
+                <span className="wf-label" style={{ color: 'var(--accent-hit)' }}>
+                  SKUPAJ: {wordStats.totalWords} (SKRITIH: {wordStats.hiddenWords})
                 </span>
               )}
             </div>
 
             <div
               style={{
-                marginTop: 10,
-                padding: '10px 12px',
+                padding: '12px 14px',
                 borderRadius: 4,
                 background: 'var(--bg-surface)',
                 border: '1px dashed var(--border-color)',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.8rem',
+                fontSize: '0.82rem',
                 lineHeight: 1.6,
-                minHeight: 70
+                minHeight: 80
               }}
             >
               {censoredPreview ||
                 'Kliknite »UVOZI« za prenos besedila iz Wikipedije in samodejni predogled cenzuriranih blokov (██████).'}
             </div>
 
-            <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+            {/* AKCIJSKA GUMBA SPODAJ po WF-03 */}
+            <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
               <button
                 type="button"
-                className="btn-share"
-                style={{
-                  flex: 1,
-                  marginTop: 0,
-                  background: 'var(--bg-surface)',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--border-color)'
-                }}
+                className="wf-btn"
+                style={{ flex: 1, height: 42 }}
                 onClick={handleImportFromWikipedia}
               >
-                <Eye size={16} /> PREDOGLED CENZURE
+                <Eye size={16} /> PREDOGLED
               </button>
 
               <button
                 type="button"
-                className="btn-share"
-                style={{ flex: 1, marginTop: 0 }}
+                className="wf-btn-dark"
+                style={{ flex: 1, height: 42 }}
                 disabled={loadingAction}
                 onClick={handleSaveScheduledPuzzle}
               >
-                <Save size={16} /> SHRANI V BAZO (SCHEDULED)
+                <Save size={16} /> SHRANI
               </button>
             </div>
           </div>

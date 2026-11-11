@@ -161,8 +161,8 @@ export const ArchiveModal: React.FC<ArchiveModalProps> = ({
           <input
             type="text"
             className="filter-input"
-            style={{ width: '100%', paddingLeft: 30, height: 36 }}
-            placeholder="Išči po številki izziva ali datumu..."
+            style={{ width: '100%', paddingLeft: 30, height: 38 }}
+            placeholder="ISKANJE PO ŠTEVILKI ALI DATUMU..."
             value={searchQuery}
             onChange={e => {
               setSearchQuery(e.target.value);
@@ -172,7 +172,7 @@ export const ArchiveModal: React.FC<ArchiveModalProps> = ({
         </div>
         <select
           className="sort-select"
-          style={{ height: 36 }}
+          style={{ height: 38, fontFamily: 'var(--font-mono)', fontWeight: 700 }}
           value={difficultyFilter}
           onChange={e => {
             setDifficultyFilter(e.target.value);
@@ -180,14 +180,14 @@ export const ArchiveModal: React.FC<ArchiveModalProps> = ({
           }}
           aria-label="Filter težavnosti"
         >
-          <option value="ALL">VSE TEŽAVNOSTI</option>
+          <option value="ALL">VSE</option>
           <option value="EASY">LAHKA (EASY)</option>
           <option value="MEDIUM">SREDNJA (MEDIUM)</option>
           <option value="HARD">TEŽKA (HARD)</option>
         </select>
       </div>
 
-      {/* US-08 AC #1, #2, #3: Kronološki seznam preteklih objavljenih ugank z datumom, številko in statusom Rešeno / Nerešeno */}
+      {/* WF-04: Seznam kartic preteklih ugank (IZZIV X s statusom REŠENO ali REŠUJ) */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {paginated.map(item => {
           const isCurrent = currentPuzzleNumber === item.puzzleNumber;
@@ -200,26 +200,18 @@ export const ArchiveModal: React.FC<ArchiveModalProps> = ({
           return (
             <div
               key={item.puzzleNumber}
-              className="guess-row"
+              className="wf-box"
               style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '12px 16px',
                 opacity: isAccessible ? 1 : 0.75,
-                cursor: 'pointer',
                 borderColor: isCurrent ? 'var(--text-primary)' : 'var(--border-color)',
-                background: isCurrent ? 'var(--bg-surface)' : 'var(--bg-card)',
-                padding: '10px 12px'
-              }}
-              onClick={() => {
-                soundFX.playKeypress();
-                if (isAccessible) {
-                  onSelectPuzzle(item.puzzleNumber);
-                  onClose();
-                } else if (onRequestLogin) {
-                  onClose();
-                  onRequestLogin();
-                }
+                background: isCurrent ? 'var(--bg-surface)' : 'var(--bg-card)'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 {item.isToday ? (
                   <Sparkles size={16} color="var(--accent-gold)" />
                 ) : isSolved ? (
@@ -231,17 +223,17 @@ export const ArchiveModal: React.FC<ArchiveModalProps> = ({
                 )}
 
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>
-                    IZZIV #{item.puzzleNumber}{' '}
+                  <div style={{ fontWeight: 800, fontSize: '0.92rem', fontFamily: 'var(--font-mono)' }}>
+                    IZZIV {item.puzzleNumber}{' '}
                     {item.isToday && (
-                      <span style={{ color: 'var(--accent-gold)', fontSize: '0.75rem' }}>
+                      <span style={{ color: 'var(--accent-gold)', fontSize: '0.72rem' }}>
                         (DANES)
                       </span>
                     )}
                     <span
                       style={{
                         marginLeft: 8,
-                        fontSize: '0.68rem',
+                        fontSize: '0.65rem',
                         padding: '1px 6px',
                         borderRadius: 3,
                         border: '1px solid var(--border-color)'
@@ -250,45 +242,53 @@ export const ArchiveModal: React.FC<ArchiveModalProps> = ({
                       {item.difficulty}
                     </span>
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                     Datum objave: {item.releaseDate}
                   </div>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                {/* US-08 AC #2: Jasno označen status Rešeno (s številom poskusov) ali Nerešeno */}
+              {/* WF-04: Gumb stanja: RESENO (light) ali RESUJ (dark) */}
+              <div>
                 {isSolved ? (
-                  <span
-                    style={{
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      color: 'var(--accent-hit)',
-                      fontFamily: 'var(--font-mono)'
+                  <button
+                    type="button"
+                    className="wf-btn"
+                    style={{ height: 34, padding: '0 12px', fontSize: '0.75rem' }}
+                    onClick={() => {
+                      soundFX.playKeypress();
+                      onSelectPuzzle(item.puzzleNumber);
+                      onClose();
                     }}
                   >
-                    REŠENO ({solvedGuesses ?? 1} poskusov)
-                  </span>
+                    REŠENO {solvedGuesses ? `(${solvedGuesses})` : ''}
+                  </button>
                 ) : isAccessible ? (
-                  <span
-                    style={{
-                      fontSize: '0.75rem',
-                      color: 'var(--text-secondary)',
-                      fontFamily: 'var(--font-mono)'
+                  <button
+                    type="button"
+                    className="wf-btn-dark"
+                    style={{ height: 34, padding: '0 16px', fontSize: '0.75rem' }}
+                    onClick={() => {
+                      soundFX.playKeypress();
+                      onSelectPuzzle(item.puzzleNumber);
+                      onClose();
                     }}
                   >
-                    NEREŠENO — REŠUJ →
-                  </span>
+                    REŠUJ →
+                  </button>
                 ) : (
-                  <span
-                    style={{
-                      fontSize: '0.75rem',
-                      color: 'var(--accent-gold)',
-                      fontFamily: 'var(--font-mono)'
+                  <button
+                    type="button"
+                    className="wf-btn"
+                    style={{ height: 34, padding: '0 10px', fontSize: '0.72rem', borderColor: 'var(--accent-gold)' }}
+                    onClick={() => {
+                      soundFX.playKeypress();
+                      onClose();
+                      onRequestLogin?.();
                     }}
                   >
-                    PRIJAVA ZA DOSTOP 🔒
-                  </span>
+                    PRIJAVA 🔒
+                  </button>
                 )}
               </div>
             </div>
@@ -296,37 +296,37 @@ export const ArchiveModal: React.FC<ArchiveModalProps> = ({
         })}
       </div>
 
-      {/* WF-04: Paginacija (PREJ, 1 OD X, DALJE) */}
+      {/* WF-04: Paginacija (PREJ, X OD Y, DALJE) */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginTop: 14,
+          marginTop: 16,
           fontFamily: 'var(--font-mono)',
-          fontSize: '0.78rem'
+          fontSize: '0.8rem'
         }}
       >
         <button
           type="button"
-          className="icon-btn"
-          style={{ width: 'auto', padding: '0 10px', height: 32 }}
+          className="wf-btn"
+          style={{ height: 32, padding: '0 14px' }}
           disabled={currentPage <= 1}
           onClick={() => setPage(p => Math.max(1, p - 1))}
         >
-          ◀ PREJ
+          PREJ
         </button>
-        <span>
-          STRAN {currentPage} OD {totalPages}
+        <span className="wf-label">
+          {currentPage} OD {totalPages}
         </span>
         <button
           type="button"
-          className="icon-btn"
-          style={{ width: 'auto', padding: '0 10px', height: 32 }}
+          className="wf-btn"
+          style={{ height: 32, padding: '0 14px' }}
           disabled={currentPage >= totalPages}
           onClick={() => setPage(p => Math.min(totalPages, p + 1))}
         >
-          DALJE ▶
+          DALJE
         </button>
       </div>
     </Modal>

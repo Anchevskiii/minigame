@@ -46,48 +46,42 @@ export const GuessLogSidebar: React.FC<GuessLogSidebarProps> = ({
     return 0;
   });
 
+  // WF-01: Dodelitev zaporednih številk poskusov (1 do N) glede na čas vnosa
+  const orderMap = new Map<string, number>();
+  [...guesses]
+    .sort((a, b) => a.timestamp - b.timestamp)
+    .forEach((g, idx) => orderMap.set(g.id, idx + 1));
+
   return (
     <aside className={`guesses-sidebar ${isOpenMobile ? 'mobile-open' : ''}`}>
-      <div className="sidebar-header">
-        <span>ZGODOVINA POSKUSOV ({guesses.length})</span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <button
-            type="button"
-            className="icon-btn"
-            style={{
-              width: 'auto',
-              height: 24,
-              padding: '0 8px',
-              fontSize: '0.68rem',
-              fontFamily: 'var(--font-mono)',
-              background: filterMode === 'all' ? 'var(--text-primary)' : 'var(--bg-card)',
-              color: filterMode === 'all' ? 'var(--bg-card)' : 'var(--text-secondary)'
-            }}
-            onClick={() => setFilterMode('all')}
-          >
-            VSI
-          </button>
-          <button
-            type="button"
-            className="icon-btn"
-            style={{
-              width: 'auto',
-              height: 24,
-              padding: '0 8px',
-              fontSize: '0.68rem',
-              fontFamily: 'var(--font-mono)',
-              background: filterMode === 'hits' ? 'var(--accent-hit)' : 'var(--bg-card)',
-              color: filterMode === 'hits' ? '#ffffff' : 'var(--text-secondary)'
-            }}
-            onClick={() => setFilterMode('hits')}
-          >
-            ZADETKI
-          </button>
+      <div className="sidebar-header" style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+          <span className="wf-title" style={{ letterSpacing: '2px' }}>ZGODOVINA</span>
           {isOpenMobile && (
             <button className="icon-btn" onClick={onCloseMobile} aria-label="Zapri seznam">
               <X size={16} />
             </button>
           )}
+        </div>
+
+        {/* WF-01: Dva zavihka: VSI [count] in ZADETKI [count] */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, width: '100%' }}>
+          <button
+            type="button"
+            className={filterMode === 'all' ? 'wf-btn-dark' : 'wf-btn'}
+            style={{ height: 32, padding: '0 8px', fontSize: '0.74rem' }}
+            onClick={() => setFilterMode('all')}
+          >
+            VSI {guesses.length}
+          </button>
+          <button
+            type="button"
+            className={filterMode === 'hits' ? 'wf-btn-dark' : 'wf-btn'}
+            style={{ height: 32, padding: '0 8px', fontSize: '0.74rem' }}
+            onClick={() => setFilterMode('hits')}
+          >
+            ZADETKI {guesses.filter(g => g.hits > 0).length}
+          </button>
         </div>
       </div>
 
@@ -129,6 +123,7 @@ export const GuessLogSidebar: React.FC<GuessLogSidebarProps> = ({
             <GuessLogRow
               key={item.id}
               item={item}
+              orderNumber={orderMap.get(item.id)}
               isActive={activeWord === item.word}
               currentMatchIndex={currentMatchIndex}
               onSelectWord={onSelectWord}
