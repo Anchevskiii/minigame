@@ -33,46 +33,47 @@ export const StatsRibbon: React.FC<StatsRibbonProps> = ({
     <div className="stats-ribbon">
       <div className="stats-chips">
         <span className="stat-chip">
-          GUESSES: <strong>{totalGuesses}</strong>
+          POSKUSI: <strong>{totalGuesses}</strong>
         </span>
         <span className="stat-chip">
-          HITS: <strong>{hitGuesses}</strong>
+          ZADETKI: <strong>{hitGuesses}</strong>
         </span>
         <span className="stat-chip">
-          ACCURACY: <strong>{accuracy}%</strong>
+          NATANČNOST: <strong>{accuracy}%</strong>
         </span>
 
-        {/* Stepper for cycling through multiple occurrences */}
-        {focusedWord && focusedMatchCount > 1 && (
-          <div className="hit-cycle-badge" title="Cycle through hits in document">
+        {/* US-02 AC #3 & #4: Gumba »Prejšnji« in »Naslednji« ter števec »Zadetek X od Y« */}
+        {focusedWord && focusedMatchCount > 0 && (
+          <div className="hit-cycle-badge" title="Premikanje med pojavitvami besede v članku">
             <span>
-              "{focusedWord}": {currentMatchIndex + 1}/{focusedMatchCount}
+              »{focusedWord.toUpperCase()}« — Zadetek {currentMatchIndex + 1} od {focusedMatchCount}
             </span>
             <button
               type="button"
               className="btn-cycle-nav"
+              style={{ width: 'auto', padding: '0 6px', fontSize: '0.7rem' }}
               onClick={() => {
                 soundFX.playKeypress();
                 onCyclePrevOccurrence?.();
               }}
-              title="Previous occurrence (Shift+Enter)"
-              aria-label="Previous hit"
+              title="Prejšnji zadetek (Shift+Enter)"
+              aria-label="Prejšnji zadetek"
             >
-              ▲
+              ◀ Prejšnji
             </button>
             <button
               type="button"
               className="btn-cycle-nav"
+              style={{ width: 'auto', padding: '0 6px', fontSize: '0.7rem' }}
               onClick={() => {
                 soundFX.playKeypress();
                 onCycleNextOccurrence?.();
               }}
-              title="Next occurrence (Enter)"
-              aria-label="Next hit"
+              title="Naslednji zadetek (Enter)"
+              aria-label="Naslednji zadetek"
             >
-              ▼
+              Naslednji ▶
             </button>
-            <span className="hit-cycle-hint">(Enter to cycle)</span>
           </div>
         )}
       </div>
@@ -85,10 +86,10 @@ export const StatsRibbon: React.FC<StatsRibbonProps> = ({
           onOpenHints();
         }}
         disabled={isWon || disabled}
-        title="Access Classified Intelligence Hints"
+        title="Odpri sistem pomoči z namigi (US-03, US-04)"
       >
         <Lightbulb size={16} />
-        <span>HINTS</span>
+        <span>NAMIG</span>
       </button>
     </div>
   );
