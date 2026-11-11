@@ -9,17 +9,19 @@ import {
   ModalsLayer
 } from '@/components';
 import { useGame, useTheme, useSound, useModals } from '@/hooks';
+import { useAuth } from '@/context/AuthContext';
 
 export const App: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const { soundEnabled, toggleSound } = useSound();
+  const { user, token, logout } = useAuth();
   const modals = useModals();
 
   const handleGameWon = useCallback(() => {
     modals.setIsWinModalOpen(true);
   }, [modals]);
 
-  const game = useGame({ onGameWon: handleGameWon });
+  const game = useGame({ onGameWon: handleGameWon, authToken: token });
 
   const handleDataReset = useCallback(() => {
     game.reloadPlayerStats();
@@ -35,11 +37,16 @@ export const App: React.FC = () => {
           onOpenHowToPlay={() => modals.setIsHowToPlayOpen(true)}
           onOpenStats={() => modals.setIsStatsOpen(true)}
           onOpenArchive={() => modals.setIsArchiveOpen(true)}
+          onOpenLeaderboard={() => modals.setIsLeaderboardOpen(true)}
+          onOpenEditorAdmin={() => modals.setIsEditorAdminOpen(true)}
+          onOpenAuth={() => modals.setIsAuthOpen(true)}
           onOpenSettings={() => modals.setIsSettingsOpen(true)}
           onToggleSidebarMobile={modals.toggleSidebarMobile}
           isSidebarMobileOpen={modals.isSidebarMobileOpen}
           soundEnabled={soundEnabled}
           onToggleSound={toggleSound}
+          user={user}
+          onLogout={logout}
         />
       )}
 
@@ -82,6 +89,7 @@ export const App: React.FC = () => {
         currentMatchIndex={game.focusedMatchIndex}
         onCycleNextOccurrence={game.cycleNextOccurrence}
         onCyclePrevOccurrence={game.cyclePrevOccurrence}
+        duplicateGuessMessage={game.duplicateGuessMessage}
       />
 
       {/* Unified Modals Layer */}
@@ -95,6 +103,15 @@ export const App: React.FC = () => {
         onCloseArchive={() => modals.setIsArchiveOpen(false)}
         currentPuzzleNumber={game.puzzle ? game.puzzle.puzzleNumber : 2}
         onSelectPuzzle={num => game.loadPuzzle(num)}
+        isLeaderboardOpen={modals.isLeaderboardOpen}
+        onCloseLeaderboard={() => modals.setIsLeaderboardOpen(false)}
+        onOpenLeaderboard={() => modals.setIsLeaderboardOpen(true)}
+        isEditorAdminOpen={modals.isEditorAdminOpen}
+        onCloseEditorAdmin={() => modals.setIsEditorAdminOpen(false)}
+        isAuthOpen={modals.isAuthOpen}
+        onCloseAuth={() => modals.setIsAuthOpen(false)}
+        onOpenAuth={() => modals.setIsAuthOpen(true)}
+        user={user}
         isSettingsOpen={modals.isSettingsOpen}
         onCloseSettings={() => modals.setIsSettingsOpen(false)}
         theme={theme}
@@ -106,15 +123,20 @@ export const App: React.FC = () => {
         onCloseHint={() => modals.setIsHintModalOpen(false)}
         onUseFreeHint={game.handleUseFreeHint}
         onUseTitleHint={game.handleUseTitleHint}
+        basicHintsUsed={game.basicHintsUsed}
         freeHintUsed={game.freeHintUsed}
         titleHintUsed={game.titleHintUsed}
+        totalTitleWords={game.totalTitleWords}
         remainingTitleWords={game.remainingTitleWords}
         isWinModalOpen={modals.isWinModalOpen}
         onCloseWin={() => modals.setIsWinModalOpen(false)}
         puzzle={game.puzzle}
         totalGuesses={game.guesses.length}
         hitGuesses={game.hitGuessesCount}
+        hintsUsedCount={game.hintsUsedCount}
         durationSeconds={game.durationSeconds}
+        unlockedAchievements={game.unlockedAchievements}
+        onOpenArchive={() => modals.setIsArchiveOpen(true)}
       />
     </div>
   );

@@ -1,7 +1,10 @@
-export * from '@/components/modals/ModalsLayer';
-export * from '@/components/modals/ArchiveModal';
-export * from '@/components/modals/HintModal';
-export * from '@/components/modals/HowToPlayModal';
-export * from '@/components/modals/SettingsModal';
-export * from '@/components/modals/StatsModal';
-export * from '@/components/modals/WinModal';
+export { HowToPlayModal } from './HowToPlayModal';
+export { StatsModal } from './StatsModal';
+export { ArchiveModal } from './ArchiveModal';
+export { LeaderboardModal } from './LeaderboardModal';
+export { EditorAdminModal } from './EditorAdminModal';
+export { AuthModal } from './AuthModal';
+export { SettingsModal } from './SettingsModal';
+export { HintModal } from './HintModal';
+export { WinModal } from './WinModal';
+export { ModalsLayer } from './ModalsLayer';
