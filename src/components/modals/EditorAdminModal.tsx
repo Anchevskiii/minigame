@@ -219,11 +219,11 @@ export const EditorAdminModal: React.FC<EditorAdminModalProps> = ({
       title="UREDNIK"
       icon={<Shield size={22} color="var(--accent-gold)" />}
     >
-      {/* WF-03: Navigacijski meni (NOVA UGANKA, KOLEDAR, SEZNAM, UPORABNIKI) */}
+      {/* WF-03: Navigacijski meni (NOVA UGANKA, KOLEDAR, UPORABNIKI) */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: user?.role === 'ADMIN' ? 'repeat(4, 1fr)' : 'repeat(3, 1fr)',
+          gridTemplateColumns: user?.role === 'ADMIN' ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)',
           gap: 6,
           marginBottom: 16
         }}
@@ -249,19 +249,7 @@ export const EditorAdminModal: React.FC<EditorAdminModalProps> = ({
             setStatusMsg(null);
           }}
         >
-          <Calendar size={14} /> KOLEDAR
-        </button>
-
-        <button
-          type="button"
-          className="wf-btn"
-          style={{ width: '100%', height: 36, fontSize: '0.74rem' }}
-          onClick={() => {
-            setActiveView('calendar');
-            setStatusMsg(null);
-          }}
-        >
-          <List size={14} /> SEZNAM
+          <Calendar size={14} /> KOLEDAR UGANK
         </button>
 
         {user?.role === 'ADMIN' && (

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Lightbulb } from 'lucide-react';
 import { soundFX } from '@/utils/audio';
 
 interface StatsRibbonProps {
@@ -11,7 +10,7 @@ interface StatsRibbonProps {
   currentMatchIndex?: number;
   isWon: boolean;
   disabled?: boolean;
-  onOpenHints: () => void;
+  onOpenHints?: () => void;
   onCycleNextOccurrence?: () => void;
   onCyclePrevOccurrence?: () => void;
 }
@@ -23,9 +22,6 @@ export const StatsRibbon: React.FC<StatsRibbonProps> = ({
   focusedWord = null,
   focusedMatchCount = 0,
   currentMatchIndex = 0,
-  isWon,
-  disabled = false,
-  onOpenHints,
   onCycleNextOccurrence,
   onCyclePrevOccurrence
 }) => {
@@ -77,20 +73,6 @@ export const StatsRibbon: React.FC<StatsRibbonProps> = ({
           </div>
         )}
       </div>
-
-      <button
-        type="button"
-        className="btn-hint-trigger"
-        onClick={() => {
-          soundFX.playKeypress();
-          onOpenHints();
-        }}
-        disabled={isWon || disabled}
-        title="Odpri sistem pomoči z namigi (US-03, US-04)"
-      >
-        <Lightbulb size={16} />
-        <span>NAMIG</span>
-      </button>
     </div>
   );
 };

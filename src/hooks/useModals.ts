@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 
 export function useModals() {
   const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
@@ -10,11 +10,6 @@ export function useModals() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isHintModalOpen, setIsHintModalOpen] = useState(false);
   const [isWinModalOpen, setIsWinModalOpen] = useState(false);
-  const [isSidebarMobileOpen, setIsSidebarMobileOpen] = useState(false);
-
-  const toggleSidebarMobile = useCallback(() => {
-    setIsSidebarMobileOpen(prev => !prev);
-  }, []);
 
   return {
     isHowToPlayOpen,
@@ -34,9 +29,6 @@ export function useModals() {
     isHintModalOpen,
     setIsHintModalOpen,
     isWinModalOpen,
-    setIsWinModalOpen,
-    isSidebarMobileOpen,
-    setIsSidebarMobileOpen,
-    toggleSidebarMobile
+    setIsWinModalOpen
   };
 }

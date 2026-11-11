@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import type { GuessItem } from '@/types/game';
-import { X, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { GuessLogRow } from '@/components/sidebar/GuessLogRow';
 
 export interface GuessLogSidebarProps {
   guesses: GuessItem[];
-  isOpenMobile: boolean;
-  onCloseMobile: () => void;
   onSelectWord: (word: string) => void;
   activeWord?: string | null;
   currentMatchIndex?: number;
@@ -17,8 +15,6 @@ export type FilterMode = 'all' | 'hits';
 
 export const GuessLogSidebar: React.FC<GuessLogSidebarProps> = ({
   guesses,
-  isOpenMobile,
-  onCloseMobile,
   onSelectWord,
   activeWord = null,
   currentMatchIndex = 0
@@ -53,15 +49,10 @@ export const GuessLogSidebar: React.FC<GuessLogSidebarProps> = ({
     .forEach((g, idx) => orderMap.set(g.id, idx + 1));
 
   return (
-    <aside className={`guesses-sidebar ${isOpenMobile ? 'mobile-open' : ''}`}>
+    <aside className="guesses-sidebar">
       <div className="sidebar-header" style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
           <span className="wf-title" style={{ letterSpacing: '2px' }}>ZGODOVINA</span>
-          {isOpenMobile && (
-            <button className="icon-btn" onClick={onCloseMobile} aria-label="Zapri seznam">
-              <X size={16} />
-            </button>
-          )}
         </div>
 
         {/* WF-01: Dva zavihka: VSI [count] in ZADETKI [count] */}
@@ -86,13 +77,13 @@ export const GuessLogSidebar: React.FC<GuessLogSidebarProps> = ({
       </div>
 
       <div className="sidebar-controls">
-        <div style={{ position: 'relative', flex: 1, display: 'flex', alignItems: 'center' }}>
+        <div style={{ position: 'relative', flex: 1, minWidth: 0, display: 'flex', alignItems: 'center' }}>
           <Search size={14} style={{ position: 'absolute', left: 8, color: 'var(--text-muted)' }} />
           <input
             type="text"
             className="filter-input"
-            style={{ paddingLeft: 26 }}
-            placeholder="Išči med poskusi..."
+            style={{ paddingLeft: 26, width: '100%' }}
+            placeholder="Išči..."
             value={filterText}
             onChange={e => setFilterText(e.target.value)}
           />
@@ -106,7 +97,7 @@ export const GuessLogSidebar: React.FC<GuessLogSidebarProps> = ({
           aria-label="Razvrsti poskuse"
         >
           <option value="recent">Najnovejši</option>
-          <option value="hits">Največ zadetkov</option>
+          <option value="hits">Zadetki</option>
           <option value="alpha">A-Ž</option>
         </select>
       </div>

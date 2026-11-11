@@ -451,8 +451,9 @@ body::before {
 /* Guesses Sidebar */
 .guesses-sidebar {
   width: 320px;
+  flex-shrink: 0;
   background: var(--bg-sidebar);
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -461,22 +462,16 @@ body::before {
   position: sticky;
   top: 80px;
   box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
 }
 
 @media (max-width: 1024px) {
   .guesses-sidebar {
-    display: none;
-  }
-  .guesses-sidebar.mobile-open {
     display: flex;
-    position: fixed;
-    top: 60px;
-    bottom: 90px;
-    right: 0;
-    left: 0;
     width: 100%;
-    max-height: unset;
-    z-index: 500;
+    position: static;
+    max-height: 420px;
+    margin-top: 16px;
   }
 }
 
@@ -489,17 +484,25 @@ body::before {
   font-family: var(--font-mono);
   font-size: 0.85rem;
   font-weight: 700;
+  box-sizing: border-box;
 }
 
 .sidebar-controls {
   padding: 8px 12px;
   border-bottom: 1px solid var(--border-color);
   display: flex;
+  align-items: center;
   gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .filter-input {
   flex: 1;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
   background: var(--bg-input);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
@@ -510,13 +513,17 @@ body::before {
 }
 
 .sort-select {
+  flex-shrink: 0;
+  max-width: 115px;
+  box-sizing: border-box;
   background: var(--bg-input);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   padding: 6px 8px;
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.76rem;
   border-radius: 4px;
+  cursor: pointer;
 }
 
 .guesses-list {
