@@ -1,6 +1,16 @@
-import React, { useState } from 'react';
-import { FolderArchive, Lock, Unlock, Sparkles, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import {
+  FolderArchive,
+  Lock,
+  Unlock,
+  Sparkles,
+  Search,
+  UserCheck,
+  CheckCircle2
+} from 'lucide-react';
+import type { ArchiveEntry, UserProfile } from '@/types/game';
 import { ARCHIVE_FILES } from '@/constants/archive';
+import { loadPuzzleProgress } from '@/utils/storage';
 import { soundFX } from '@/utils/audio';
 import { Modal } from '@/components/common/Modal';
 
@@ -9,148 +19,315 @@ export interface ArchiveModalProps {
   onClose: () => void;
   currentPuzzleNumber: number;
   onSelectPuzzle: (puzzleNumber: number) => void;
+  user?: UserProfile | null;
+  onRequestLogin?: () => void;
 }
+
+const PAGE_SIZE = 4;
 
 export const ArchiveModal: React.FC<ArchiveModalProps> = ({
   isOpen,
   onClose,
   currentPuzzleNumber,
-  onSelectPuzzle
+  onSelectPuzzle,
+  user = null,
+  onRequestLogin
 }) => {
-  const [isSubscriber, setIsSubscriber] = useState(true); // Default to unlocked for demo testing
+  const [archiveItems, setArchiveItems] = useState<ArchiveEntry[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [difficultyFilter, setDifficultyFilter] = useState<string>('ALL');
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const token = localStorage.getItem('redacted_auth_jwt');
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    fetch('/api/archive', { headers })
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        if (data?.archive) {
+          setArchiveItems(data.archive);
+        } else {
+          // Fallback na lokalni seznam
+          const fallback: ArchiveEntry[] = ARCHIVE_FILES.map(f => {
+            const localSaved = loadPuzzleProgress(`puzzle-${f.number}`);
+            return {
+              id: `puzzle-${f.number}`,
+              puzzleNumber: f.number,
+              releaseDate: f.date,
+              difficulty: f.number === 3 ? 'HARD' : f.number % 2 === 0 ? 'EASY' : 'MEDIUM',
+              status: f.isToday ? 'PUBLISHED' : 'ARCHIVED',
+              isToday: f.isToday,
+              solved: Boolean(localSaved?.isWon),
+              guessesCount: localSaved?.isWon ? localSaved.guesses.length : null
+            };
+          });
+          setArchiveItems(fallback);
+        }
+      })
+      .catch(() => {
+        const fallback: ArchiveEntry[] = ARCHIVE_FILES.map(f => {
+          const localSaved = loadPuzzleProgress(`puzzle-${f.number}`);
+          return {
+            id: `puzzle-${f.number}`,
+            puzzleNumber: f.number,
+            releaseDate: f.date,
+            difficulty: f.number === 3 ? 'HARD' : f.number % 2 === 0 ? 'EASY' : 'MEDIUM',
+            status: f.isToday ? 'PUBLISHED' : 'ARCHIVED',
+            isToday: f.isToday,
+            solved: Boolean(localSaved?.isWon),
+            guessesCount: localSaved?.isWon ? localSaved.guesses.length : null
+          };
+        });
+        setArchiveItems(fallback);
+      });
+  }, [isOpen, user]);
+
+  const filtered = archiveItems.filter(item => {
+    if (difficultyFilter !== 'ALL' && item.difficulty !== difficultyFilter) {
+      return false;
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      return (
+        `izziv #${item.puzzleNumber}`.includes(q) ||
+        String(item.puzzleNumber).includes(q) ||
+        item.releaseDate.includes(q)
+      );
+    }
+    return true;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="HISTORICAL DOSSIER ARCHIVE"
+      title="ZGODOVINSKI ARHIV PRETEKLIH UGANK"
       icon={<FolderArchive size={22} color="var(--text-primary)" />}
     >
-      {/* Subscription Banner */}
-      <div
-        className="classified-card"
-        style={{
-          background: isSubscriber ? 'var(--accent-hit-light)' : 'var(--bg-surface)',
-          borderColor: isSubscriber ? 'var(--accent-hit)' : 'var(--accent-gold)',
-          marginBottom: '20px'
-        }}
-      >
+      {/* US-08 AC #4: Neregistriranim gostom sistem ob kliku na arhiv prikaže prijazen poziv k prijavi */}
+      {!user && (
         <div
+          className="classified-card"
           style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 8
+            borderColor: 'var(--accent-gold)',
+            background: 'var(--bg-surface)',
+            marginBottom: 16
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              fontWeight: 700,
-              fontSize: '0.9rem'
-            }}
-          >
-            <Star size={16} color="var(--accent-gold)" fill="var(--accent-gold)" />
-            {isSubscriber
-              ? 'FIELD OPERATIVE SUBSCRIPTION: ACTIVE'
-              : 'ARCHIVE PASS REQUIRED ($2.99/mo)'}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+            <div>
+              <h4 style={{ margin: 0, color: 'var(--accent-gold)' }}>
+                DOSTOP DO PRETEKLIH UGANK ZA REGISTRIRANE IGRALCE
+              </h4>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: 4 }}>
+                Današnja dnevna uganka je brezplačno odprta za vse goste! Za reševanje preteklih izzivov iz arhiva in shranjevanje napredka se prijavite.
+              </p>
+            </div>
+            {onRequestLogin && (
+              <button
+                type="button"
+                className="btn-share"
+                style={{
+                  width: 'auto',
+                  marginTop: 0,
+                  padding: '8px 14px',
+                  fontSize: '0.78rem',
+                  whiteSpace: 'nowrap'
+                }}
+                onClick={() => {
+                  soundFX.playKeypress();
+                  onClose();
+                  onRequestLogin();
+                }}
+              >
+                <UserCheck size={15} /> Prijava / Registracija
+              </button>
+            )}
           </div>
-          <button
-            style={{
-              background: 'transparent',
-              border: '1px dashed var(--border-color)',
-              fontSize: '0.75rem',
-              fontFamily: 'var(--font-mono)',
-              padding: '3px 8px',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-            onClick={() => setIsSubscriber(!isSubscriber)}
-          >
-            Toggle Demo Sub ({isSubscriber ? 'Active' : 'Free'})
-          </button>
         </div>
-        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-          {isSubscriber
-            ? 'All historical Wikipedia classified archives are unlocked. Rewarded ads are automatically disabled.'
-            : 'Daily game is 100% free! Subscribe to unlock binge-play access to all past puzzles from Day 1.'}
-        </p>
+      )}
+
+      {/* WF-04: Polje za ISKANJE ter filter kategorij (VSE / EASY / MEDIUM / HARD) */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+        <div style={{ position: 'relative', flex: 1, display: 'flex', alignItems: 'center' }}>
+          <Search size={14} style={{ position: 'absolute', left: 10, color: 'var(--text-muted)' }} />
+          <input
+            type="text"
+            className="filter-input"
+            style={{ width: '100%', paddingLeft: 30, height: 36 }}
+            placeholder="Išči po številki izziva ali datumu..."
+            value={searchQuery}
+            onChange={e => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
+          />
+        </div>
+        <select
+          className="sort-select"
+          style={{ height: 36 }}
+          value={difficultyFilter}
+          onChange={e => {
+            setDifficultyFilter(e.target.value);
+            setPage(1);
+          }}
+          aria-label="Filter težavnosti"
+        >
+          <option value="ALL">VSE TEŽAVNOSTI</option>
+          <option value="EASY">LAHKA (EASY)</option>
+          <option value="MEDIUM">SREDNJA (MEDIUM)</option>
+          <option value="HARD">TEŽKA (HARD)</option>
+        </select>
       </div>
 
-      {/* Archive List */}
+      {/* US-08 AC #1, #2, #3: Kronološki seznam preteklih objavljenih ugank z datumom, številko in statusom Rešeno / Nerešeno */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        {ARCHIVE_FILES.map(item => {
-          const isCurrent = currentPuzzleNumber === item.number;
-          const isAccessible = item.isToday || isSubscriber;
+        {paginated.map(item => {
+          const isCurrent = currentPuzzleNumber === item.puzzleNumber;
+          const isAccessible = item.isToday || Boolean(user);
+          const localSaved = loadPuzzleProgress(`puzzle-${item.puzzleNumber}`);
+          const isSolved = item.solved || Boolean(localSaved?.isWon);
+          const solvedGuesses =
+            item.guessesCount ?? (localSaved?.isWon ? localSaved.guesses.length : null);
 
           return (
             <div
-              key={item.number}
+              key={item.puzzleNumber}
               className="guess-row"
               style={{
-                opacity: isAccessible ? 1 : 0.65,
-                cursor: isAccessible ? 'pointer' : 'not-allowed',
+                opacity: isAccessible ? 1 : 0.75,
+                cursor: 'pointer',
                 borderColor: isCurrent ? 'var(--text-primary)' : 'var(--border-color)',
-                background: isCurrent ? 'var(--bg-surface)' : 'var(--bg-card)'
+                background: isCurrent ? 'var(--bg-surface)' : 'var(--bg-card)',
+                padding: '10px 12px'
               }}
               onClick={() => {
+                soundFX.playKeypress();
                 if (isAccessible) {
-                  soundFX.playKeypress();
-                  onSelectPuzzle(item.number);
+                  onSelectPuzzle(item.puzzleNumber);
                   onClose();
+                } else if (onRequestLogin) {
+                  onClose();
+                  onRequestLogin();
                 }
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 {item.isToday ? (
                   <Sparkles size={16} color="var(--accent-gold)" />
+                ) : isSolved ? (
+                  <CheckCircle2 size={16} color="var(--accent-hit)" />
                 ) : isAccessible ? (
-                  <Unlock size={16} color="var(--accent-hit)" />
+                  <Unlock size={16} color="var(--text-secondary)" />
                 ) : (
                   <Lock size={16} color="var(--text-muted)" />
                 )}
 
                 <div>
                   <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>
-                    DOSSIER #{item.number}{' '}
+                    IZZIV #{item.puzzleNumber}{' '}
                     {item.isToday && (
                       <span style={{ color: 'var(--accent-gold)', fontSize: '0.75rem' }}>
-                        (TODAY)
+                        (DANES)
                       </span>
                     )}
+                    <span
+                      style={{
+                        marginLeft: 8,
+                        fontSize: '0.68rem',
+                        padding: '1px 6px',
+                        borderRadius: 3,
+                        border: '1px solid var(--border-color)'
+                      }}
+                    >
+                      {item.difficulty}
+                    </span>
                   </div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    Released: {item.date} UTC
+                    Datum objave: {item.releaseDate}
                   </div>
                 </div>
               </div>
 
-              <div>
-                {isCurrent ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                {/* US-08 AC #2: Jasno označen status Rešeno (s številom poskusov) ali Nerešeno */}
+                {isSolved ? (
                   <span
                     style={{
                       fontSize: '0.75rem',
                       fontWeight: 700,
-                      color: 'var(--accent-hit)'
+                      color: 'var(--accent-hit)',
+                      fontFamily: 'var(--font-mono)'
                     }}
                   >
-                    CURRENTLY PLAYING
+                    REŠENO ({solvedGuesses ?? 1} poskusov)
                   </span>
                 ) : isAccessible ? (
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                    LOAD FILE →
+                  <span
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--text-secondary)',
+                      fontFamily: 'var(--font-mono)'
+                    }}
+                  >
+                    NEREŠENO — REŠUJ →
                   </span>
                 ) : (
-                  <span style={{ fontSize: '0.75rem', color: 'var(--accent-classified)' }}>
-                    LOCKED
+                  <span
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--accent-gold)',
+                      fontFamily: 'var(--font-mono)'
+                    }}
+                  >
+                    PRIJAVA ZA DOSTOP 🔒
                   </span>
                 )}
               </div>
             </div>
           );
         })}
+      </div>
+
+      {/* WF-04: Paginacija (PREJ, 1 OD X, DALJE) */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginTop: 14,
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.78rem'
+        }}
+      >
+        <button
+          type="button"
+          className="icon-btn"
+          style={{ width: 'auto', padding: '0 10px', height: 32 }}
+          disabled={currentPage <= 1}
+          onClick={() => setPage(p => Math.max(1, p - 1))}
+        >
+          ◀ PREJ
+        </button>
+        <span>
+          STRAN {currentPage} OD {totalPages}
+        </span>
+        <button
+          type="button"
+          className="icon-btn"
+          style={{ width: 'auto', padding: '0 10px', height: 32 }}
+          disabled={currentPage >= totalPages}
+          onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+        >
+          DALJE ▶
+        </button>
       </div>
     </Modal>
   );
