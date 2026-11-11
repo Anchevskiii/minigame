@@ -3,6 +3,8 @@ import { Router, type Request, type Response } from 'express';
 import { store, type StoredPuzzle, type StoredGameSession } from '../lib/store';
 import { authenticateOptional } from '../middleware/auth';
 import { maskPuzzleForClient } from '../utils/masking';
+import { cleanGuess, stemWord } from '../utils/stemmer';
+import { processSessionGuess } from '../utils/game-engine';
 
 export const gameRouter = Router();
 
@@ -54,7 +56,7 @@ export function getOrCreateSession(
   return newSession;
 }
 
-function formatSessionResponse(session: StoredGameSession, puzzle: StoredPuzzle) {
+export function formatSessionResponse(session: StoredGameSession, puzzle: StoredPuzzle) {
   const revealedSet = new Set<number>(session.revealedTokenIds);
   const titleHitStems = new Set<string>(
     puzzle.content.tokenData.titleTokens
@@ -138,6 +140,55 @@ gameRouter.get('/puzzle/:number', authenticateOptional, (req: Request, res: Resp
 
   res.json({
     puzzle: maskPuzzleForClient(puzzle, revealedSet, isWon),
-    session: formatSessionResponse(session, puzzle)
+    session: formatSessionResponse(session, publishedOrFallback(puzzle))
   });
+});
+
+function publishedOrFallback(p: StoredPuzzle): StoredPuzzle {
+  return p;
+}
+
+/**
+ * POST /api/game/guess
+ * US-01 & US-07: Strežniško preverjanje ugibanja s Porter Stemmerjem, preprečevanje dvojnega vnosa in zapis v `guess_logs`.
+ */
+gameRouter.post('/guess', authenticateOptional, async (req: Request, res: Response) => {
+  try {
+    const rawWord = String(req.body?.word || '');
+    const puzzleId = String(req.body?.puzzleId || '');
+    const sessionId = typeof req.body?.sessionId === 'string' ? req.body.sessionId : undefined;
+    const durationSeconds =
+      typeof req.body?.durationSeconds === 'number' ? req.body.durationSeconds : undefined;
+
+    const cleaned = cleanGuess(rawWord);
+    if (!cleaned) {
+      res.status(400).json({ error: 'Vnesite veljavno besedo za ugibanje.' });
+      return;
+    }
+
+    const puzzle =
+      store.puzzles.get(puzzleId) ||
+      Array.from(store.puzzles.values()).find(p => p.status === 'PUBLISHED');
+
+    if (!puzzle) {
+      res.status(404).json({ error: 'Uganka ni bila najdena.' });
+      return;
+    }
+
+    const session = getOrCreateSession(puzzle, req.user?.id ?? null, sessionId);
+    const stem = stemWord(cleaned);
+
+    const result = await processSessionGuess(session, puzzle, cleaned, stem, durationSeconds);
+    const revealedSet = new Set<number>(session.revealedTokenIds);
+
+    res.json({
+      ...result,
+      session: formatSessionResponse(session, puzzle),
+      // Če je igralec zmagal, vrni celoten deklasificiran dokument (US-05 AC #1)
+      fullPuzzle: result.isWon ? maskPuzzleForClient(puzzle, revealedSet, true) : undefined
+    });
+  } catch (err) {
+    console.error('Napaka pri preverjanju ugibanja:', err);
+    res.status(500).json({ error: 'Prišlo je do napake pri preverjanju besede.' });
+  }
 });
