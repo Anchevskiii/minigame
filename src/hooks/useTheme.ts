@@ -6,7 +6,13 @@ export function useTheme() {
   const [theme, setTheme] = useState<ThemeMode>(() => loadTheme());
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
+    const root = document.documentElement;
+    root.setAttribute('data-theme', theme);
+    root.classList.remove('theme-light', 'theme-dark', 'theme-terminal', 'dark');
+    root.classList.add(`theme-${theme}`);
+    if (theme === 'dark' || theme === 'terminal') {
+      root.classList.add('dark');
+    }
     saveTheme(theme);
   }, [theme]);
 

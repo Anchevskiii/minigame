@@ -67,15 +67,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="SYSTEM SETTINGS & PRIVACY"
+      title="NASTAVITVE VIDEZA IN ZVOKA"
       icon={<Settings size={22} color="var(--text-primary)" />}
     >
-      {/* Display Theme */}
+      {/* US-13: Izbira barvne teme (Svetla, Temna, Terminal) */}
       <div className="classified-card">
-        <h4>DISPLAY THEME</h4>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 10 }}>
+        <h4>IZBIRA BARVNE TEME (TAILWIND TEME)</h4>
+        <div className="grid grid-cols-3 gap-2 mt-2.5">
           <button
-            className="icon-btn"
+            type="button"
+            className="icon-btn w-full h-11 gap-1.5 font-mono text-xs"
             style={{
               width: '100%',
               height: 44,
@@ -86,11 +87,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             }}
             onClick={() => onSelectTheme('light')}
           >
-            <Sun size={16} /> Light
+            <Sun size={16} /> Svetla (Papir)
           </button>
 
           <button
-            className="icon-btn"
+            type="button"
+            className="icon-btn w-full h-11 gap-1.5 font-mono text-xs"
             style={{
               width: '100%',
               height: 44,
@@ -101,11 +103,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             }}
             onClick={() => onSelectTheme('dark')}
           >
-            <Moon size={16} /> Dark
+            <Moon size={16} /> Temna (Oglje)
           </button>
 
           <button
-            className="icon-btn"
+            type="button"
+            className="icon-btn w-full h-11 gap-1.5 font-mono text-xs"
             style={{
               width: '100%',
               height: 44,
@@ -116,43 +119,45 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             }}
             onClick={() => onSelectTheme('terminal')}
           >
-            <Terminal size={16} /> CRT Green
+            <Terminal size={16} /> Terminal (CRT)
           </button>
         </div>
       </div>
 
-      {/* Audio Effects */}
+      {/* US-13: Zvočni učinki mehanskega pisalnega stroja (Web Audio API) */}
       <div
-        className="classified-card"
+        className="classified-card flex justify-between items-center"
         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
       >
         <div>
-          <h4>AUDIO SYNTHESIZER</h4>
+          <h4>ZVOČNI UČINKI PISALNEGA STROJA (WEB AUDIO API)</h4>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-            Mechanical typewriter key clacks and declassification chimes.
+            Mehanski zvoki tipkanja in zvočni signal ob razkritju besed.
           </p>
         </div>
         <button
+          type="button"
           className="icon-btn"
           style={{ width: 44, height: 44 }}
           onClick={onToggleSound}
-          aria-label="Toggle Sound"
+          aria-label="Preklopi zvok"
         >
           {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
         </button>
       </div>
 
-      {/* GDPR & Privacy Controls */}
+      {/* Zasebnost in lokalni podatki */}
       <div className="classified-card">
         <h4>
-          <ShieldCheck size={14} style={{ display: 'inline', marginRight: 4 }} /> PRIVACY & GDPR COMPLIANCE
+          <ShieldCheck size={14} style={{ display: 'inline', marginRight: 4 }} /> ZASEBNOST IN LOKALNA SHRAMBA
         </h4>
         <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: 14 }}>
-          In accordance with GDPR Articles 17 & 20, game logs and statistics are stored locally on your device with zero cross-site tracker scripts.
+          Izbrana tema, stanje zvoka in lokalni napredek gosta se hranijo v brskalnikovi shrambi (localStorage) brez zunanjih sledilnikov.
         </p>
 
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <div className="flex gap-2.5 flex-wrap" style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button
+            type="button"
             className="btn-share"
             style={{
               flex: 1,
@@ -170,10 +175,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             ) : (
               <Download size={16} />
             )}
-            <span>{downloadSuccess ? 'EXPORT READY' : 'EXPORT DATA (JSON)'}</span>
+            <span>{downloadSuccess ? 'IZVOŽENO' : 'IZVOZI PODATKE (JSON)'}</span>
           </button>
 
           <button
+            type="button"
             className="btn-share"
             style={{
               flex: 1,
@@ -187,7 +193,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             onClick={handleClearData}
           >
             <Trash2 size={16} />
-            <span>{confirmDelete ? 'CONFIRM PURGE?' : 'PURGE ALL LOCAL DATA'}</span>
+            <span>{confirmDelete ? 'POTRDI IZBRIS?' : 'PONASTAVI LOKALNE PODATKE'}</span>
           </button>
         </div>
       </div>
