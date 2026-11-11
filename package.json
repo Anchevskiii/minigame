@@ -4,10 +4,15 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"cyan,green\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "tsx watch backend/src/index.ts",
+    "dev:frontend": "vite",
     "build": "tsc -b && vite build",
     "build-puzzles": "node scripts/build-puzzle.mjs",
     "lint": "oxlint",
+    "test": "tsx scripts/test-acceptance-criteria.ts && tsx scripts/test-game-logic.mjs",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts",
     "preview": "vite preview"
   },
   "dependencies": {

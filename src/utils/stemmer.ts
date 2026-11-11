@@ -47,5 +47,5 @@ export function stemWord(w: string): string {
 }
 
 export function cleanGuess(input: string): string {
-  return input.toLowerCase().replace(/[^a-z0-9]/g, '').trim();
+  return input.toLowerCase().replace(/[^a-z]/g, '').trim();
 }
