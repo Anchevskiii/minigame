@@ -6,7 +6,6 @@ import {
   Settings,
   Volume2,
   VolumeX,
-  List,
   Trophy,
   Shield,
   User,
@@ -26,8 +25,6 @@ export interface HeaderProps {
   onOpenEditorAdmin?: () => void;
   onOpenAuth?: () => void;
   onOpenSettings: () => void;
-  onToggleSidebarMobile: () => void;
-  isSidebarMobileOpen: boolean;
   soundEnabled: boolean;
   onToggleSound: () => void;
   user?: UserProfile | null;
@@ -44,8 +41,6 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenEditorAdmin,
   onOpenAuth,
   onOpenSettings,
-  onToggleSidebarMobile,
-  isSidebarMobileOpen,
   soundEnabled,
   onToggleSound,
   user = null,
@@ -82,16 +77,6 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         <div className="header-actions">
-          {/* Mobilni preklop stranske vrstice */}
-          <button
-            className={`icon-btn ${isSidebarMobileOpen ? 'active' : ''}`}
-            onClick={onToggleSidebarMobile}
-            title="Zgodovina ugibanj"
-            aria-label="Zgodovina ugibanj"
-          >
-            <List size={18} />
-          </button>
-
           {/* WF-01: Navigacijski gumbi z besedilom */}
           <button
             className="wf-nav-btn"

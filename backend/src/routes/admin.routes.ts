@@ -183,11 +183,37 @@ adminRouter.post(
         return;
       }
 
+      if (store.isUsingDatabase() && prisma) {
+        try {
+          const dbDateConflict = await prisma.puzzle.findUnique({
+            where: { releaseDate: new Date(`${releaseDate}T00:00:00.000Z`) }
+          });
+          if (dbDateConflict) {
+            res.status(409).json({
+              error: `Izbrani datum (${releaseDate}) že ima dodeljeno uganko (#${dbDateConflict.puzzleNumber}). Izberite drug datum.`
+            });
+            return;
+          }
+        } catch {
+          // ignore DB error, fallback to memory
+        }
+      }
+
       const maxNum = Array.from(store.puzzles.values()).reduce(
         (max, p) => Math.max(max, p.puzzleNumber),
         0
       );
-      const nextPuzzleNumber = maxNum + 1;
+      let nextPuzzleNumber = maxNum + 1;
+      if (store.isUsingDatabase() && prisma) {
+        try {
+          const dbMax = await prisma.puzzle.aggregate({ _max: { puzzleNumber: true } });
+          if (dbMax._max.puzzleNumber) {
+            nextPuzzleNumber = Math.max(nextPuzzleNumber, dbMax._max.puzzleNumber + 1);
+          }
+        } catch {
+          // ignore fallback to maxNum + 1
+        }
+      }
 
       const built = req.body?.tokenData
         ? {

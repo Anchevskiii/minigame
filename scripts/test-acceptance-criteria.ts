@@ -321,7 +321,7 @@ async function runAcceptanceTests() {
     assert(Boolean(importData.title), 'Uvoz mora vrniti naslov članka');
 
     // Schedule new puzzle & verify duplicate date conflict check (US-11)
-    const scheduleDate = '2026-12-30';
+    const scheduleDate = `2099-11-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`;
     const createPuzzleRes = await fetch(`${baseUrl}/api/admin/puzzles`, {
       method: 'POST',
       headers: {

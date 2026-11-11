@@ -41,8 +41,6 @@ export const App: React.FC = () => {
           onOpenEditorAdmin={() => modals.setIsEditorAdminOpen(true)}
           onOpenAuth={() => modals.setIsAuthOpen(true)}
           onOpenSettings={() => modals.setIsSettingsOpen(true)}
-          onToggleSidebarMobile={modals.toggleSidebarMobile}
-          isSidebarMobileOpen={modals.isSidebarMobileOpen}
           soundEnabled={soundEnabled}
           onToggleSound={toggleSound}
           user={user}
@@ -67,8 +65,6 @@ export const App: React.FC = () => {
 
           <GuessLogSidebar
             guesses={game.guesses}
-            isOpenMobile={modals.isSidebarMobileOpen}
-            onCloseMobile={() => modals.setIsSidebarMobileOpen(false)}
             onSelectWord={game.handleScrollToWord}
             activeWord={game.focusedWord}
             currentMatchIndex={game.focusedMatchIndex}
