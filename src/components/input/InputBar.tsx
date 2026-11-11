@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, CheckCircle2 } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import { soundFX } from '@/utils/audio';
 import { calculateAccuracy } from '@/utils/game-rules';
 import { StatsRibbon } from '@/components/input/StatsRibbon';
@@ -16,6 +16,7 @@ export interface InputBarProps {
   currentMatchIndex?: number;
   onCycleNextOccurrence?: () => void;
   onCyclePrevOccurrence?: () => void;
+  duplicateGuessMessage?: string | null;
 }
 
 export const InputBar: React.FC<InputBarProps> = ({
@@ -29,7 +30,8 @@ export const InputBar: React.FC<InputBarProps> = ({
   focusedMatchCount = 0,
   currentMatchIndex = 0,
   onCycleNextOccurrence,
-  onCyclePrevOccurrence
+  onCyclePrevOccurrence,
+  duplicateGuessMessage = null
 }) => {
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -47,7 +49,6 @@ export const InputBar: React.FC<InputBarProps> = ({
     const trimmed = inputValue.trim();
     if (isWon || disabled) return;
 
-    // If input is empty and we have multiple hits for the focused word, Enter cycles to next hit
     if (!trimmed) {
       if (focusedMatchCount > 1 && onCycleNextOccurrence) {
         soundFX.playKeypress();
@@ -78,14 +79,35 @@ export const InputBar: React.FC<InputBarProps> = ({
   const isNextHitAction = !inputValue.trim() && focusedMatchCount > 1;
 
   const placeholderText = isWon
-    ? 'DECRYPTED // DOCUMENT FULLY UNVEILED'
+    ? 'DOKUMENT V CELOTI RAZKRIT // REŠENO'
     : isNextHitAction
-    ? `Press Enter to jump to hit ${((currentMatchIndex + 1) % focusedMatchCount) + 1}/${focusedMatchCount}...`
-    : 'Enter intel word to deduce...';
+    ? `Pritisnite Enter za skok na zadetek ${((currentMatchIndex + 1) % focusedMatchCount) + 1} od ${focusedMatchCount}...`
+    : 'Vnesite besedo za ugibanje...';
 
   return (
     <footer className="sticky-input-container">
       <div className="input-bar-inner">
+        {duplicateGuessMessage && (
+          <div
+            role="status"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '4px 10px',
+              borderRadius: 4,
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--accent-gold)',
+              color: 'var(--text-primary)',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.78rem'
+            }}
+          >
+            <AlertCircle size={14} color="var(--accent-gold)" />
+            <span>{duplicateGuessMessage}</span>
+          </div>
+        )}
+
         <StatsRibbon
           totalGuesses={totalGuesses}
           hitGuesses={hitGuesses}
@@ -125,12 +147,12 @@ export const InputBar: React.FC<InputBarProps> = ({
             {isWon ? (
               <CheckCircle2 size={18} />
             ) : isNextHitAction ? (
-              <span>NEXT HIT ↷</span>
+              <span>NASLEDNJI ↷</span>
             ) : (
               <Send size={18} />
             )}
             <span style={{ marginLeft: 6 }}>
-              {isWon ? 'SOLVED' : isNextHitAction ? '' : 'GUESS'}
+              {isWon ? 'REŠENO' : isNextHitAction ? '' : 'UGIBAJ'}
             </span>
           </button>
         </form>
