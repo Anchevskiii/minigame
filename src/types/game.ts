@@ -1,5 +1,16 @@
 export type TokenType = 'word' | 'punct' | 'space';
 
+export type UserRole = 'PLAYER' | 'EDITOR' | 'ADMIN';
+export type DifficultyLevel = 'EASY' | 'MEDIUM' | 'HARD';
+export type PuzzleStatusType = 'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'ARCHIVED';
+
+export interface UserProfile {
+  id: string;
+  username: string;
+  email: string;
+  role: UserRole;
+}
+
 export interface Token {
   id: number;
   type: TokenType;
@@ -39,6 +50,9 @@ export interface Puzzle {
   releaseDateUtc: string;
   wikipediaTitle: string;
   wikipediaUrl: string;
+  difficulty?: DifficultyLevel;
+  status?: PuzzleStatusType;
+  totalTitleWords?: number;
   stats: PuzzleStats;
   titleTokens: Token[];
   titleTargetWords: string[];
@@ -54,11 +68,25 @@ export interface GuessItem {
   timestamp: number;
 }
 
+export interface AchievementItem {
+  id: string;
+  code: 'FIRST_WIN' | 'STREAK_7' | 'STREAK_30' | 'NO_HINTS' | 'FAST_SOLVER' | 'HIGH_ACCURACY';
+  title: string;
+  description: string;
+  badgeIcon: string;
+  requiredThreshold: number;
+  unlocked?: boolean;
+  unlockedAt?: string | null;
+}
+
 export interface PlayerStats {
   gamesPlayed: number;
   gamesWon: number;
   currentStreak: number;
   maxStreak: number;
+  totalGuesses?: number;
+  hitGuesses?: number;
+  accuracyPercentage?: number;
   lastPlayedDateUtc: string | null;
   guessDistribution: {
     '1-25': number;
@@ -66,6 +94,31 @@ export interface PlayerStats {
     '51-100': number;
     '101+': number;
   };
+  achievements?: AchievementItem[];
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  userId: string;
+  username: string;
+  guessesCount: number;
+  accuracyPercentage: number;
+  durationSeconds: number;
+  currentStreak: number;
+  maxStreak: number;
+  gamesWon: number;
+  isCurrentUser?: boolean;
+}
+
+export interface ArchiveEntry {
+  id: string;
+  puzzleNumber: number;
+  releaseDate: string;
+  difficulty: DifficultyLevel;
+  status: PuzzleStatusType;
+  isToday: boolean;
+  solved: boolean;
+  guessesCount: number | null;
 }
 
 export type ThemeMode = 'light' | 'dark' | 'terminal';
