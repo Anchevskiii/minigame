@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Lightbulb, PlayCircle, ShieldAlert, CheckCircle, Loader2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Lightbulb, ShieldAlert, CheckCircle, AlertTriangle, HelpCircle } from 'lucide-react';
 import { soundFX } from '@/utils/audio';
 import { Modal } from '@/components/common/Modal';
+
+export const MAX_BASIC_HINTS = 3;
 
 export interface HintModalProps {
   isOpen: boolean;
   onClose: () => void;
   onUseFreeHint: () => void;
   onUseTitleHint: () => void;
+  basicHintsUsed?: number;
   freeHintUsed: boolean;
   titleHintUsed: boolean;
   titleWordsRemaining: number;
+  totalTitleWords?: number;
 }
 
 export const HintModal: React.FC<HintModalProps> = ({
@@ -18,39 +22,24 @@ export const HintModal: React.FC<HintModalProps> = ({
   onClose,
   onUseFreeHint,
   onUseTitleHint,
+  basicHintsUsed = 0,
   freeHintUsed,
   titleHintUsed,
-  titleWordsRemaining
+  titleWordsRemaining,
+  totalTitleWords = 2
 }) => {
-  const [adSimulating, setAdSimulating] = useState(false);
-  const [countdown, setCountdown] = useState(8);
+  const [confirmingTitleHint, setConfirmingTitleHint] = useState(false);
 
-  useEffect(() => {
-    if (!adSimulating) return;
+  const usedBasicCount = basicHintsUsed > 0 ? basicHintsUsed : freeHintUsed ? MAX_BASIC_HINTS : 0;
+  const remainingBasicHints = Math.max(0, MAX_BASIC_HINTS - usedBasicCount);
+  const isBasicExhausted = remainingBasicHints <= 0;
 
-    const interval = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setAdSimulating(false);
-          onUseTitleHint();
-          onClose();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [adSimulating, onUseTitleHint, onClose]);
-
-  const startRewardedAd = () => {
-    setCountdown(8);
-    setAdSimulating(true);
-  };
+  // US-04 AC #1: Glavni namig je na voljo le, če so v naslovu članka vsaj 2 besedi in je vsaj ena še neodprta
+  const isTitleHintEligible =
+    totalTitleWords >= 2 && titleWordsRemaining >= 1 && !titleHintUsed;
 
   const handleClose = () => {
-    setAdSimulating(false);
+    setConfirmingTitleHint(false);
     onClose();
   };
 
@@ -58,53 +47,86 @@ export const HintModal: React.FC<HintModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="CLASSIFIED INTELLIGENCE HINTS"
+      title="SISTEM POMOČI IN NAMIGOV"
       icon={<Lightbulb size={22} color="var(--accent-gold)" />}
     >
-      {adSimulating ? (
-        <div style={{ textAlign: 'center', padding: '30px 10px' }}>
-          <div
-            style={{
-              background: '#0a0d12',
-              color: '#38ef7d',
-              padding: '24px',
-              borderRadius: '8px',
-              fontFamily: 'var(--font-mono)',
-              border: '1px solid #1f2937',
-              marginBottom: '16px'
-            }}
-          >
-            <Loader2 size={32} className="spin-anim" style={{ margin: '0 auto 12px' }} />
-            <h4 style={{ letterSpacing: '2px', marginBottom: '8px' }}>
-              SPONSORED SATELLITE INTERCEPT IN PROGRESS
+      {confirmingTitleHint ? (
+        <div className="classified-card" style={{ borderColor: 'var(--accent-gold)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <AlertTriangle size={22} color="var(--accent-gold)" />
+            <h4 style={{ margin: 0, color: 'var(--accent-gold)' }}>
+              OPOZORILO: POTRDITEV GLAVNEGA NAMIGA
             </h4>
-            <p style={{ color: '#9ca3af', fontSize: '0.85rem' }}>
-              [Simulating Rewarded Partner Broadcast: Google H5 Gaming Network]
-            </p>
-            <div
+          </div>
+          <p style={{ fontSize: '0.92rem', color: 'var(--text-primary)', marginBottom: 12 }}>
+            Ali ste prepričani, da želite uporabiti <strong>glavni namig</strong>? Gre za večjo pomoč, ki neposredno razkrije eno naključno besedo v naslovu članka.
+          </p>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: 18 }}>
+            Glavni namig lahko uporabite samo <strong>enkrat (1x)</strong> na posamezno igro, uporaba namiga pa bo zabeležena v statistiki te igre.
+          </p>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button
+              type="button"
+              className="btn-share"
               style={{
-                fontSize: '1.8rem',
-                fontWeight: 700,
-                margin: '16px 0',
-                color: '#ffffff'
+                flex: 1,
+                marginTop: 0,
+                background: 'var(--bg-surface)',
+                color: 'var(--text-primary)',
+                border: '1px solid var(--border-color)'
+              }}
+              onClick={() => {
+                soundFX.playKeypress();
+                setConfirmingTitleHint(false);
               }}
             >
-              {countdown}s REMAINING
-            </div>
-            <p style={{ fontSize: '0.8rem', color: '#6b7280' }}>
-              Decryption key will release upon transmission completion.
-            </p>
+              Prekliči
+            </button>
+            <button
+              type="button"
+              className="btn-share"
+              style={{
+                flex: 1,
+                marginTop: 0,
+                background: 'var(--accent-gold)',
+                color: '#000000',
+                fontWeight: 700
+              }}
+              onClick={() => {
+                soundFX.playKeypress();
+                setConfirmingTitleHint(false);
+                onUseTitleHint();
+                onClose();
+              }}
+            >
+              Potrdi in razkrij besedo v naslovu
+            </button>
           </div>
         </div>
       ) : (
         <div className="hint-options">
-          {/* Tier 1 Free Hint */}
+          {/* US-03: Osnovni namig (kontekstna beseda) — do 3 uporabe na igro */}
           <div className="classified-card">
-            <h4>TIER 1: RECONNAISSANCE INTERCEPT (FREE)</h4>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+              <h4 style={{ margin: 0 }}>1. OSNOVNI NAMIG (KONTEKSTNA BESEDA)</h4>
+              <span
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: 4,
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-color)'
+                }}
+              >
+                Preostalo: {remainingBasicHints} / {MAX_BASIC_HINTS}
+              </span>
+            </div>
             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: 12 }}>
-              Decrypts one high-frequency contextual keyword hidden in the document body. Useful for establishing the core domain or era.
+              Naključno razkrije eno pogosto besedo v besedilu članka, ki še ni bila uganjena. Pomaga pri prepoznavanju konteksta in področja teme.
             </p>
-            {freeHintUsed ? (
+            {isBasicExhausted ? (
               <div
                 style={{
                   display: 'flex',
@@ -114,10 +136,11 @@ export const HintModal: React.FC<HintModalProps> = ({
                   fontSize: '0.85rem'
                 }}
               >
-                <CheckCircle size={16} /> Already deployed for this daily case file.
+                <CheckCircle size={16} /> Porabili ste vse {MAX_BASIC_HINTS} osnovne namige v tej igri.
               </div>
             ) : (
               <button
+                type="button"
                 className="btn-share"
                 style={{
                   background: 'var(--text-primary)',
@@ -130,24 +153,40 @@ export const HintModal: React.FC<HintModalProps> = ({
                   onClose();
                 }}
               >
-                <Lightbulb size={16} /> DEPLOY RECON HINT (1 FREE)
+                <Lightbulb size={16} /> UPORABI OSNOVNI NAMIG ({remainingBasicHints} PREOSTALO)
               </button>
             )}
           </div>
 
-          {/* Tier 2 Rewarded Ad Hint */}
+          {/* US-04: Glavni namig (beseda v naslovu) — največ 1x na igro, le če ima naslov >= 2 besedi */}
           <div className="classified-card" style={{ borderColor: 'var(--accent-gold)' }}>
-            <h4 style={{ color: 'var(--accent-gold)' }}>
-              TIER 2: TARGETED TITLE DECLASSIFICATION (REWARDED)
-            </h4>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: 12 }}>
-              Stuck at a brick wall? Receive one guaranteed word from the classified article title by watching a brief partner broadcast.
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+              <h4 style={{ margin: 0, color: 'var(--accent-gold)' }}>
+                2. GLAVNI NAMIG (BESEDA V NASLOVU)
+              </h4>
+              <span
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: 4,
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-color)'
+                }}
+              >
+                Preostalo: {titleHintUsed ? 0 : 1} / 1
+              </span>
+            </div>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: 10 }}>
+              Razkrije natanko eno naključno besedo neposredno v naslovu članka. Na voljo največ enkrat na igro, če naslov vsebuje vsaj 2 besedi.
             </p>
-            <div style={{ fontSize: '0.85rem', marginBottom: 14, color: 'var(--text-muted)' }}>
-              Target title words remaining: <strong>{titleWordsRemaining}</strong>
+            <div style={{ fontSize: '0.83rem', marginBottom: 14, color: 'var(--text-muted)' }}>
+              Skupaj besed v naslovu: <strong>{totalTitleWords}</strong> • Še neodprtih besed v naslovu:{' '}
+              <strong>{titleWordsRemaining}</strong>
             </div>
 
-            {titleHintUsed || titleWordsRemaining === 0 ? (
+            {titleHintUsed ? (
               <div
                 style={{
                   display: 'flex',
@@ -157,11 +196,37 @@ export const HintModal: React.FC<HintModalProps> = ({
                   fontSize: '0.85rem'
                 }}
               >
-                <ShieldAlert size={16} /> Title hint already claimed or all title words decrypted!
+                <ShieldAlert size={16} /> Glavni namig ste v tej igri že uporabili (največ 1 na igro).
+              </div>
+            ) : totalTitleWords < 2 ? (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  color: 'var(--text-muted)',
+                  fontSize: '0.85rem'
+                }}
+              >
+                <HelpCircle size={16} /> Glavni namig ni na voljo (naslov članka ima manj kot 2 besedi).
+              </div>
+            ) : titleWordsRemaining === 0 ? (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  color: 'var(--text-muted)',
+                  fontSize: '0.85rem'
+                }}
+              >
+                <CheckCircle size={16} /> Vse besede v naslovu so že razkrite!
               </div>
             ) : (
               <button
+                type="button"
                 className="btn-share"
+                disabled={!isTitleHintEligible}
                 style={{
                   background: 'var(--accent-gold)',
                   color: '#000000',
@@ -170,10 +235,10 @@ export const HintModal: React.FC<HintModalProps> = ({
                 }}
                 onClick={() => {
                   soundFX.playKeypress();
-                  startRewardedAd();
+                  setConfirmingTitleHint(true);
                 }}
               >
-                <PlayCircle size={18} /> WATCH AD & REVEAL TITLE WORD
+                <AlertTriangle size={18} /> RAZKRIJ BESEDO V NASLOVU (ZAHTEVA POTRDITEV)
               </button>
             )}
           </div>

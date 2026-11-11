@@ -86,7 +86,11 @@ export function findMatchingTokenIds(
 
   const checkToken = (token: Token) => {
     if (token.type !== 'word' || token.isStopWord) return;
-    if (token.canonical === canonicalWord || token.stem === stem) {
+    if (
+      token.canonical === canonicalWord ||
+      token.stem === stem ||
+      token.text.toLowerCase() === canonicalWord
+    ) {
       matchingIds.push(token.id);
     }
   };
@@ -105,7 +109,7 @@ export function findMatchingTokenIds(
 }
 
 /**
- * Tier 1 hint: Selects a high-frequency unrevealed word from the document body
+ * US-03: Osnovni namig — naključno razkrije eno pogosto besedo v besedilu, ki še ni bila uganjena.
  */
 export function findFreeHintCandidate(
   puzzle: Puzzle,
@@ -149,22 +153,27 @@ export function findFreeHintCandidate(
 }
 
 /**
- * Tier 2 hint: Selects the first unrevealed title keyword
+ * US-04: Glavni namig — na voljo le, če so v naslovu vsaj 2 besedi in je vsaj 1 še neodprta.
+ * Naključno izbere eno še neodkrito besedo v naslovu članka.
  */
 export function findTitleHintCandidate(
   puzzle: Puzzle,
   revealedTokenIds: Set<number>
 ): string | null {
-  const unrevealedTitleTokens = puzzle.titleTokens.filter(
-    (token: Token) =>
-      token.type === 'word' &&
-      !token.isStopWord &&
-      !revealedTokenIds.has(token.id) &&
-      token.canonical
+  const allTitleWordTokens = puzzle.titleTokens.filter(
+    (token: Token) => token.type === 'word' && !token.isStopWord
+  );
+
+  // US-04 AC #1: Glavni namig je na voljo le, če so v naslovu članka vsaj 2 besedi
+  if (allTitleWordTokens.length < 2) return null;
+
+  const unrevealedTitleTokens = allTitleWordTokens.filter(
+    (token: Token) => !revealedTokenIds.has(token.id) && token.canonical
   );
 
   if (unrevealedTitleTokens.length === 0) return null;
-  return unrevealedTitleTokens[0].canonical ?? null;
+  const randomIndex = Math.floor(Math.random() * unrevealedTitleTokens.length);
+  return unrevealedTitleTokens[randomIndex].canonical ?? null;
 }
 
 /**
