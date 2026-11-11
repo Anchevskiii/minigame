@@ -1,0 +1,41 @@
+name: redacted-minigame
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: redacted-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: redacted_minigame
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d redacted_minigame"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: redacted-app
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgrespassword@postgres:5432/redacted_minigame?schema=public
+      DIRECT_URL: postgresql://postgres:postgrespassword@postgres:5432/redacted_minigame?schema=public
+      JWT_SECRET: minigame-local-docker-jwt-secret-key-32chars-minimum-safe
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:

@@ -59,7 +59,7 @@ adminRouter.post(
         )}&format=json&origin=*`;
         const wikiRes = await fetch(apiUrl, {
           headers: {
-            'User-Agent': 'RedactedMinigame/1.0 (FERI RIRS MVP; educational project)'
+            'User-Agent': 'RedactedMinigame/1.0 (Wikipedia Word Game; security-first)'
           }
         });
         if (wikiRes.ok) {
