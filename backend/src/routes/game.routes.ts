@@ -4,7 +4,12 @@ import { store, type StoredPuzzle, type StoredGameSession } from '../lib/store';
 import { authenticateOptional } from '../middleware/auth';
 import { maskPuzzleForClient } from '../utils/masking';
 import { cleanGuess, stemWord } from '../utils/stemmer';
-import { processSessionGuess } from '../utils/game-engine';
+import {
+  processSessionGuess,
+  selectBasicHintWord,
+  selectTitleHintWord,
+  MAX_BASIC_HINTS_PER_GAME
+} from '../utils/game-engine';
 
 export const gameRouter = Router();
 
@@ -140,13 +145,9 @@ gameRouter.get('/puzzle/:number', authenticateOptional, (req: Request, res: Resp
 
   res.json({
     puzzle: maskPuzzleForClient(puzzle, revealedSet, isWon),
-    session: formatSessionResponse(session, publishedOrFallback(puzzle))
+    session: formatSessionResponse(session, puzzle)
   });
 });
-
-function publishedOrFallback(p: StoredPuzzle): StoredPuzzle {
-  return p;
-}
 
 /**
  * POST /api/game/guess
@@ -184,11 +185,109 @@ gameRouter.post('/guess', authenticateOptional, async (req: Request, res: Respon
     res.json({
       ...result,
       session: formatSessionResponse(session, puzzle),
-      // Če je igralec zmagal, vrni celoten deklasificiran dokument (US-05 AC #1)
       fullPuzzle: result.isWon ? maskPuzzleForClient(puzzle, revealedSet, true) : undefined
     });
   } catch (err) {
     console.error('Napaka pri preverjanju ugibanja:', err);
     res.status(500).json({ error: 'Prišlo je do napake pri preverjanju besede.' });
+  }
+});
+
+/**
+ * POST /api/game/hint
+ * US-03: Osnovni namig (do 3 uporabe na igro).
+ * US-04: Glavni namig v naslovu (največ 1 uporaba na igro, če ima naslov >= 2 besedi).
+ */
+gameRouter.post('/hint', authenticateOptional, async (req: Request, res: Response) => {
+  try {
+    const hintType = req.body?.type === 'title' ? 'title' : 'basic';
+    const puzzleId = String(req.body?.puzzleId || '');
+    const sessionId = typeof req.body?.sessionId === 'string' ? req.body.sessionId : undefined;
+    const durationSeconds =
+      typeof req.body?.durationSeconds === 'number' ? req.body.durationSeconds : undefined;
+
+    const puzzle =
+      store.puzzles.get(puzzleId) ||
+      Array.from(store.puzzles.values()).find(p => p.status === 'PUBLISHED');
+
+    if (!puzzle) {
+      res.status(404).json({ error: 'Uganka ni bila najdena.' });
+      return;
+    }
+
+    const session = getOrCreateSession(puzzle, req.user?.id ?? null, sessionId);
+    if (session.status === 'WON') {
+      res.status(400).json({ error: 'Uganka je že rešena.' });
+      return;
+    }
+
+    const revealedSet = new Set<number>(session.revealedTokenIds);
+
+    if (hintType === 'basic') {
+      if (session.basicHintsUsed >= MAX_BASIC_HINTS_PER_GAME) {
+        res.status(400).json({
+          error: `Osnovni namig je omejen na največ ${MAX_BASIC_HINTS_PER_GAME} uporabe na igro.`
+        });
+        return;
+      }
+
+      const candidate = selectBasicHintWord(puzzle, revealedSet);
+      if (!candidate) {
+        res.status(400).json({ error: 'Ni več razpoložljivih besed za osnovni namig.' });
+        return;
+      }
+
+      session.basicHintsUsed += 1;
+      session.hintsUsed = session.basicHintsUsed + (session.titleHintUsed ? 1 : 0);
+
+      const cleaned = cleanGuess(candidate);
+      const stem = stemWord(cleaned);
+      const result = await processSessionGuess(session, puzzle, cleaned, stem, durationSeconds);
+      const updatedSet = new Set<number>(session.revealedTokenIds);
+
+      res.json({
+        ...result,
+        hintType: 'basic',
+        hintWord: cleaned,
+        session: formatSessionResponse(session, puzzle),
+        fullPuzzle: result.isWon ? maskPuzzleForClient(puzzle, updatedSet, true) : undefined
+      });
+      return;
+    }
+
+    // Glavni namig (title) — US-04
+    if (session.titleHintUsed) {
+      res.status(400).json({
+        error: 'Glavni namig je mogoče uporabiti največ enkrat na posamezno igro.'
+      });
+      return;
+    }
+
+    const titleSelection = selectTitleHintWord(puzzle, revealedSet);
+    if (!titleSelection.word) {
+      res.status(400).json({
+        error: titleSelection.error || 'Glavni namig za to uganko ni na voljo.'
+      });
+      return;
+    }
+
+    session.titleHintUsed = true;
+    session.hintsUsed = session.basicHintsUsed + 1;
+
+    const cleaned = cleanGuess(titleSelection.word);
+    const stem = stemWord(cleaned);
+    const result = await processSessionGuess(session, puzzle, cleaned, stem, durationSeconds);
+    const updatedSet = new Set<number>(session.revealedTokenIds);
+
+    res.json({
+      ...result,
+      hintType: 'title',
+      hintWord: cleaned,
+      session: formatSessionResponse(session, puzzle),
+      fullPuzzle: result.isWon ? maskPuzzleForClient(puzzle, updatedSet, true) : undefined
+    });
+  } catch (err) {
+    console.error('Napaka pri uporabi namiga:', err);
+    res.status(500).json({ error: 'Prišlo je do napake pri uporabi namiga.' });
   }
 });

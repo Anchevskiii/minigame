@@ -10,6 +10,9 @@ import {
 import { prisma } from '../lib/prisma';
 import { checkServerWinCondition } from './masking';
 
+export const MAX_BASIC_HINTS_PER_GAME = 3;
+export const MAX_TITLE_HINTS_PER_GAME = 1;
+
 export interface ServerGuessResult {
   alreadyGuessed: boolean;
   message?: string;
@@ -80,6 +83,86 @@ export function evaluateServerGuess(
     hits,
     isTitleHit
   };
+}
+
+/**
+ * US-03: Izbere naključno pogosto besedo v besedilu, ki še ni bila razkrita.
+ */
+export function selectBasicHintWord(
+  puzzle: StoredPuzzle,
+  revealedIds: Set<number>
+): string | null {
+  const unrevealedBodyTokens: TokenRecord[] = [];
+  const titleStems = new Set(
+    puzzle.content.tokenData.titleTokens
+      .filter(t => t.type === 'word' && !t.isStopWord && t.stem)
+      .map(t => t.stem!)
+  );
+
+  puzzle.content.tokenData.sections.forEach(section => {
+    section.paragraphs.forEach(paragraph => {
+      paragraph.tokens.forEach(token => {
+        if (
+          token.type === 'word' &&
+          !token.isStopWord &&
+          !revealedIds.has(token.id) &&
+          token.canonical &&
+          (!token.stem || !titleStems.has(token.stem))
+        ) {
+          unrevealedBodyTokens.push(token);
+        }
+      });
+    });
+  });
+
+  if (unrevealedBodyTokens.length === 0) return null;
+
+  const freqMap = new Map<string, number>();
+  unrevealedBodyTokens.forEach(token => {
+    freqMap.set(token.canonical!, (freqMap.get(token.canonical!) || 0) + 1);
+  });
+
+  const frequentCandidates = Array.from(freqMap.entries())
+    .filter(([, count]) => count >= 2)
+    .map(([word]) => word);
+
+  if (frequentCandidates.length > 0) {
+    const idx = Math.floor(Math.random() * frequentCandidates.length);
+    return frequentCandidates[idx];
+  }
+
+  const idx = Math.floor(Math.random() * unrevealedBodyTokens.length);
+  return unrevealedBodyTokens[idx].canonical ?? null;
+}
+
+/**
+ * US-04: Izbere naključno še neodkrito besedo v naslovu članka (le če ima naslov >= 2 besedi).
+ */
+export function selectTitleHintWord(
+  puzzle: StoredPuzzle,
+  revealedIds: Set<number>
+): { word: string | null; error?: string } {
+  const allTitleWords = puzzle.content.tokenData.titleTokens.filter(
+    t => t.type === 'word' && !t.isStopWord && t.canonical
+  );
+
+  if (allTitleWords.length < 2) {
+    return {
+      word: null,
+      error: 'Glavni namig je na voljo le pri člankih z vsaj 2 besedama v naslovu.'
+    };
+  }
+
+  const unrevealedTitleWords = allTitleWords.filter(t => !revealedIds.has(t.id));
+  if (unrevealedTitleWords.length === 0) {
+    return {
+      word: null,
+      error: 'Vse besede v naslovu so že razkrite.'
+    };
+  }
+
+  const idx = Math.floor(Math.random() * unrevealedTitleWords.length);
+  return { word: unrevealedTitleWords[idx].canonical ?? null };
 }
 
 /**
