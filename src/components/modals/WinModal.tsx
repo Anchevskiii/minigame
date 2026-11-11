@@ -1,7 +1,19 @@
 import React, { useState } from 'react';
-import { Trophy, Share2, ExternalLink, Check, Flame, Award } from 'lucide-react';
+import {
+  Trophy,
+  Share2,
+  ExternalLink,
+  Check,
+  Flame,
+  Award,
+  FolderArchive,
+  BarChart2,
+  Clock
+} from 'lucide-react';
+import type { AchievementItem } from '@/types/game';
 import { soundFX } from '@/utils/audio';
 import { calculateAccuracy } from '@/utils/game-rules';
+import { useDailyCountdown } from '@/hooks/useDailyCountdown';
 import { Modal } from '@/components/common/Modal';
 
 export interface WinModalProps {
@@ -15,6 +27,15 @@ export interface WinModalProps {
   hintsUsed: number;
   currentStreak: number;
   durationSeconds?: number;
+  unlockedAchievements?: AchievementItem[];
+  onOpenLeaderboard?: () => void;
+  onOpenArchive?: () => void;
+}
+
+function formatDuration(seconds: number): string {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 }
 
 export const WinModal: React.FC<WinModalProps> = ({
@@ -26,19 +47,26 @@ export const WinModal: React.FC<WinModalProps> = ({
   totalGuesses,
   hitGuesses,
   hintsUsed,
-  currentStreak
+  currentStreak,
+  durationSeconds = 0,
+  unlockedAchievements = [],
+  onOpenLeaderboard,
+  onOpenArchive
 }) => {
   const [copied, setCopied] = useState(false);
+  const countdown = useDailyCountdown();
 
   const accuracy = calculateAccuracy(hitGuesses, totalGuesses);
+  const formattedTime = formatDuration(durationSeconds);
 
+  // US-05 AC #3: Strukturirano besedilo z emoji ikonami, ki ne vsebuje naslova članka
   const generateShareText = () => {
     return `[REDACTED] #${puzzleNumber} 🌍
-Guesses: ${totalGuesses} 📉
-Accuracy: ${accuracy}% 🎯
-Hints used: ${hintsUsed} 💪
-Streak: ${currentStreak} 🔥
-https://redacted-game.com`;
+Poskusi: ${totalGuesses} 📉
+Natančnost: ${accuracy}% 🎯
+Čas: ${formattedTime} ⏱️
+Namigi: ${hintsUsed} 💡
+Niz zmag: ${currentStreak} 🔥`;
   };
 
   const handleCopyShare = async () => {
@@ -47,11 +75,12 @@ https://redacted-game.com`;
     try {
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(text);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2500);
       }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
     } catch {
-      // Fallback
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
     }
   };
 
@@ -59,10 +88,10 @@ https://redacted-game.com`;
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="DOSSIER DECLASSIFIED!"
+      title="ČESTITKE — DOKUMENT DEKLASIFICIRAN!"
       icon={<Trophy size={24} color="#ffd700" />}
     >
-      <div style={{ textAlign: 'center', margin: '16px 0 24px 0' }}>
+      <div style={{ textAlign: 'center', margin: '12px 0 20px 0' }}>
         <div
           style={{
             display: 'inline-flex',
@@ -73,137 +102,161 @@ https://redacted-game.com`;
             padding: '4px 14px',
             borderRadius: '4px',
             fontFamily: 'var(--font-mono)',
-            fontSize: '0.8rem',
+            fontSize: '0.78rem',
             letterSpacing: '2px',
-            marginBottom: '12px'
+            marginBottom: '10px'
           }}
         >
-          <Award size={14} /> CLASSIFIED IDENTITY CONFIRMED
+          <Award size={14} /> SKRITI NASLOV ČLANKA RAZKRIT
         </div>
 
         <h2
           style={{
             fontFamily: 'var(--font-typewriter)',
-            fontSize: '2rem',
+            fontSize: '1.85rem',
             color: 'var(--text-primary)',
             textTransform: 'uppercase',
             letterSpacing: '2px'
           }}
         >
-          "{articleTitle}"
+          »{articleTitle}«
         </h2>
 
-        <a
-          href={wikipediaUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+        {wikipediaUrl && (
+          <a
+            href={wikipediaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 4,
+              fontSize: '0.84rem',
+              color: 'var(--text-secondary)',
+              marginTop: '6px',
+              textDecoration: 'underline'
+            }}
+          >
+            Preberi izvirni članek na Wikipediji <ExternalLink size={12} />
+          </a>
+        )}
+      </div>
+
+      {/* WF-02 & US-05 AC #2: Mreža 4 ključnih metrik (Poskusi, Natančnost, Čas, Namigi) */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: '8px',
+          marginBottom: '16px'
+        }}
+      >
+        <div className="classified-card" style={{ textAlign: 'center', padding: '10px 4px', margin: 0 }}>
+          <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+            {totalGuesses}
+          </div>
+          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            POSKUSI
+          </div>
+        </div>
+
+        <div className="classified-card" style={{ textAlign: 'center', padding: '10px 4px', margin: 0 }}>
+          <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--accent-hit)' }}>
+            {accuracy}%
+          </div>
+          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            NATANČNOST
+          </div>
+        </div>
+
+        <div className="classified-card" style={{ textAlign: 'center', padding: '10px 4px', margin: 0 }}>
+          <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+            {formattedTime}
+          </div>
+          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            ČAS
+          </div>
+        </div>
+
+        <div className="classified-card" style={{ textAlign: 'center', padding: '10px 4px', margin: 0 }}>
+          <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--accent-gold)' }}>
+            {hintsUsed}
+          </div>
+          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            NAMIGI
+          </div>
+        </div>
+      </div>
+
+      {/* WF-02: Dnevni niz (Streak) */}
+      <div
+        className="classified-card"
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '10px 14px',
+          marginBottom: '12px'
+        }}
+      >
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', fontWeight: 700 }}>
+          DNEVNI NIZ ZMAG:
+        </span>
+        <span
           style={{
             display: 'inline-flex',
             alignItems: 'center',
             gap: 4,
-            fontSize: '0.85rem',
-            color: 'var(--text-secondary)',
-            marginTop: '6px',
-            textDecoration: 'underline'
+            fontWeight: 700,
+            color: 'var(--accent-gold)',
+            fontFamily: 'var(--font-mono)'
           }}
         >
-          Read unredacted article on Wikipedia <ExternalLink size={12} />
-        </a>
+          {currentStreak} DNI <Flame size={18} fill="var(--accent-gold)" />
+        </span>
       </div>
 
-      {/* Stats Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '12px',
-          marginBottom: '20px'
-        }}
-      >
+      {/* US-12 AC #3 & WF-02: Obvestilo o osvojenih dosežkih */}
+      {unlockedAchievements.length > 0 && (
         <div
           className="classified-card"
-          style={{ textAlign: 'center', padding: '12px 6px', margin: 0 }}
+          style={{
+            borderColor: 'var(--accent-gold)',
+            background: 'var(--bg-surface)',
+            marginBottom: '12px'
+          }}
         >
           <div
             style={{
-              fontSize: '1.6rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.78rem',
               fontWeight: 700,
-              color: 'var(--text-primary)'
+              color: 'var(--accent-gold)',
+              marginBottom: 4
             }}
           >
-            {totalGuesses}
+            <Award size={16} /> ODKLENJEN POSEBEN DOSEŽEK:
           </div>
-          <div
-            style={{
-              fontSize: '0.75rem',
-              color: 'var(--text-muted)',
-              fontFamily: 'var(--font-mono)'
-            }}
-          >
-            TOTAL GUESSES
-          </div>
+          {unlockedAchievements.map(ach => (
+            <div key={ach.code} style={{ fontSize: '0.85rem', fontWeight: 700 }}>
+              🏅 {ach.title} — <span style={{ fontWeight: 400 }}>{ach.description}</span>
+            </div>
+          ))}
         </div>
+      )}
 
-        <div
-          className="classified-card"
-          style={{ textAlign: 'center', padding: '12px 6px', margin: 0 }}
-        >
-          <div
-            style={{
-              fontSize: '1.6rem',
-              fontWeight: 700,
-              color: 'var(--accent-hit)'
-            }}
-          >
-            {accuracy}%
-          </div>
-          <div
-            style={{
-              fontSize: '0.75rem',
-              color: 'var(--text-muted)',
-              fontFamily: 'var(--font-mono)'
-            }}
-          >
-            ACCURACY
-          </div>
-        </div>
-
-        <div
-          className="classified-card"
-          style={{ textAlign: 'center', padding: '12px 6px', margin: 0 }}
-        >
-          <div
-            style={{
-              fontSize: '1.6rem',
-              fontWeight: 700,
-              color: 'var(--accent-gold)'
-            }}
-          >
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
-              {currentStreak} <Flame size={18} fill="var(--accent-gold)" />
-            </span>
-          </div>
-          <div
-            style={{
-              fontSize: '0.75rem',
-              color: 'var(--text-muted)',
-              fontFamily: 'var(--font-mono)'
-            }}
-          >
-            DAILY STREAK
-          </div>
-        </div>
-      </div>
-
-      {/* Share Block Preview */}
+      {/* Predogled besedila za deljenje */}
       <div
         style={{
           background: 'var(--bg-surface)',
-          padding: '12px',
+          padding: '10px 12px',
           borderRadius: '4px',
           border: '1px dashed var(--border-color)',
           fontFamily: 'var(--font-mono)',
-          fontSize: '0.85rem',
+          fontSize: '0.82rem',
           whiteSpace: 'pre-wrap',
           color: 'var(--text-primary)'
         }}
@@ -211,12 +264,72 @@ https://redacted-game.com`;
         {generateShareText()}
       </div>
 
-      <button className="btn-share" onClick={handleCopyShare}>
+      {/* US-05 AC #3 & #4: Gumb »Deli rezultat« z jasno vizualno potrditvijo */}
+      <button type="button" className="btn-share" onClick={handleCopyShare}>
         {copied ? <Check size={18} /> : <Share2 size={18} />}
         <span>
-          {copied ? 'COPIED INTELLIGENCE TO CLIPBOARD!' : 'SHARE SPOILER-FREE REPORT'}
+          {copied ? 'Rezultat skopiran v odložišče!' : 'DELI REZULTAT'}
         </span>
       </button>
+
+      {/* WF-02: Navigacijska gumba za prehod na LESTVICO ali v ARHIV */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 10 }}>
+        {onOpenLeaderboard && (
+          <button
+            type="button"
+            className="btn-share"
+            style={{
+              marginTop: 0,
+              background: 'var(--bg-surface)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border-color)',
+              padding: '10px'
+            }}
+            onClick={() => {
+              onClose();
+              onOpenLeaderboard();
+            }}
+          >
+            <BarChart2 size={16} /> LESTVICA
+          </button>
+        )}
+        {onOpenArchive && (
+          <button
+            type="button"
+            className="btn-share"
+            style={{
+              marginTop: 0,
+              background: 'var(--bg-surface)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border-color)',
+              padding: '10px'
+            }}
+            onClick={() => {
+              onClose();
+              onOpenArchive();
+            }}
+          >
+            <FolderArchive size={16} /> ARHIV
+          </button>
+        )}
+      </div>
+
+      {/* WF-02: Napotek o času naslednjega izziva */}
+      <div
+        style={{
+          textAlign: 'center',
+          marginTop: 14,
+          fontSize: '0.76rem',
+          color: 'var(--text-muted)',
+          fontFamily: 'var(--font-mono)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 6
+        }}
+      >
+        <Clock size={13} /> Naslednji dnevni izziv ob 00:00 UTC (čez {countdown})
+      </div>
     </Modal>
   );
 };
