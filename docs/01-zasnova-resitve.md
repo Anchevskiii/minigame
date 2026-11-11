@@ -24,7 +24,7 @@ Aplikacija je namenjena trem glavnim skupinam uporabnikov:
 
 1. **Ljubitelji miselnih in besednih iger:**
    * Igralci, ki želijo vsak dan rešiti kratek miselni izziv, spremljati svoj niz zmag (*streak*) in deliti rezultat s prijatelji.
-2. **Učenci, študenti in radovedneži:**
+2. **Raziskovalci, radovedneži in ljubitelji znanja:**
    * Uporabniki, ki želijo skozi igro spoznavati zanimiva zgodovinska dejstva, znanost, geografijo ali znane osebnosti.
 3. **Uredniki in učitelji:**
    * Osebe, ki želijo pripravljati sezname člankov, prilagajati težavnost in ustvarjati tematske uganke za druge.

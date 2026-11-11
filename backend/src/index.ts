@@ -1,4 +1,6 @@
 import 'dotenv/config';
+import path from 'node:path';
+import fs from 'node:fs';
 import express from 'express';
 import { applySecurityMiddleware, apiRateLimiter } from './middleware/security';
 import { authRouter } from './routes/auth.routes';
@@ -31,6 +33,18 @@ export function createApp() {
   app.use('/api/stats', statsRouter);
   app.use('/api', leaderboardRouter);
   app.use('/api/admin', adminRouter);
+
+  // V produkcijskem / kontejnerskem načinu streži zgrajen frontend (dist/)
+  const distPath = path.resolve(process.cwd(), 'dist');
+  if (fs.existsSync(distPath)) {
+    app.use(express.static(distPath));
+    app.get('*', (req, res, next) => {
+      if (req.path.startsWith('/api')) {
+        return next();
+      }
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
+  }
 
   return app;
 }

@@ -1,6 +1,6 @@
 # 5. Uporabniške zgodbe in pogoji sprejemljivosti
 
-Dokument vsebuje 15 uporabniških zgodb z natančnimi pogoji sprejemljivosti (*Acceptance Criteria*). Uporabniške zgodbe izhajajo iz funkcionalnosti, definiranih v 1. nalogi, ter sledijo standardni strukturi:
+Dokument vsebuje 15 uporabniških zgodb z natančnimi pogoji sprejemljivosti (*Acceptance Criteria*). Uporabniške zgodbe izhajajo iz funkcionalnosti, definiranih v specifikaciji zasnove rešitve, ter sledijo standardni strukturi:
 > **Kot [uporabniška vloga] želim [dejanje/cilj], da [razlog/vrednost].**
 
 Vsi pogoji sprejemljivosti so zastavljeni po načelih **INVEST** (neodvisni, pogajalski, vredni, ocenljivi, obvladljivi in preverljivi).

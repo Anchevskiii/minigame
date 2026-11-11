@@ -8,11 +8,17 @@
     "dev:backend": "tsx watch backend/src/index.ts",
     "dev:frontend": "vite",
     "build": "tsc -b && vite build",
+    "start": "tsx backend/src/index.ts",
     "build-puzzles": "node scripts/build-puzzle.mjs",
     "lint": "oxlint",
     "test": "tsx scripts/test-acceptance-criteria.ts && tsx scripts/test-game-logic.mjs",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
+    "db:setup": "prisma db push && prisma db seed",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down",
+    "docker:dev": "docker compose -f docker-compose.dev.yml up",
+    "docker:db": "docker compose up postgres -d",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -1,0 +1,16 @@
+FROM node:20-alpine
+WORKDIR /app
+
+RUN apk add --no-cache libc6-compat postgresql-client
+
+COPY package*.json ./
+COPY prisma ./prisma/
+
+RUN npm install
+
+COPY . .
+RUN npx prisma generate
+
+EXPOSE 3001 5173
+
+CMD ["sh", "-c", "until pg_isready -h postgres -p 5432 -U postgres; do echo 'Čakam na bazo...'; sleep 1; done; npx prisma db push --skip-generate; npx prisma db seed; npm run dev"]
