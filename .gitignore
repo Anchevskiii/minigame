@@ -8,10 +8,18 @@ dist-ssr/
 build/
 */dist/
 
-# Environment variables
+# Environment variables & Secrets (STRICT SECURITY FOR PUBLIC REPO)
 .env
 .env.*
+**/.env
+**/.env.*
 !.env.example
+!**/.env.example
+*.pem
+*.key
+*.cert
+.supabase/
+.mcp*
 
 # Logs
 logs/

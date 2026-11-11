@@ -1,0 +1,177 @@
+// ============================================================================
+// [REDACTED] — Prisma ORM podatkovna shema (docs/03-podatkovni-model.md)
+// Baza: PostgreSQL (Supabase) | Izvorni PostgreSQL ENUM tipi (ADR 0002, ADR 0006)
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ----------------------------------------------------------------------------
+// Našteti tipi (PostgreSQL ENUM)
+// ----------------------------------------------------------------------------
+
+enum Role {
+  PLAYER // Registriran igralec
+  EDITOR // Urednik vsebin
+  ADMIN  // Skrbnik sistema
+}
+
+enum Difficulty {
+  EASY   // Lahka (krajši članek, več vnaprej razkritih besed)
+  MEDIUM // Srednja (standardni dnevni članek)
+  HARD   // Težka (obsežno strokovno ali zgodovinsko besedilo)
+}
+
+enum PuzzleStatus {
+  DRAFT     // V pripravi (viden le uredniku)
+  SCHEDULED // Načrtovan za objavo na določen datum
+  PUBLISHED // Javna dnevna uganka
+  ARCHIVED  // Pretekla uganka v arhivu
+}
+
+enum SessionStatus {
+  IN_PROGRESS // Reševanje v teku
+  WON         // Uspešno rešeno (naslov uganjen)
+  ABANDONED   // Prekinjena igra
+}
+
+enum AchievementCode {
+  FIRST_WIN     // Prva uspešno rešena uganka
+  STREAK_7      // 7 dni zaporednih zmag
+  STREAK_30     // 30 dni zaporednih zmag
+  NO_HINTS      // Zmaga brez uporabe namigov
+  FAST_SOLVER   // Zmaga v manj kot 3 minutah
+  HIGH_ACCURACY // Zmaga z natančnostjo nad 80 %
+}
+
+// ----------------------------------------------------------------------------
+// Entitete (Tabele)
+// ----------------------------------------------------------------------------
+
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  username  String   @unique @db.VarChar(50)
+  email     String   @unique @db.VarChar(255)
+  role      Role     @default(PLAYER)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  stats            UserStats?
+  createdPuzzles   Puzzle[]          @relation("CreatedPuzzles")
+  gameSessions     GameSession[]
+  userAchievements UserAchievement[]
+
+  @@map("users")
+}
+
+model UserStats {
+  userId             String    @id @map("user_id") @db.Uuid
+  currentStreak      Int       @default(0) @map("current_streak")
+  maxStreak          Int       @default(0) @map("max_streak")
+  gamesPlayed        Int       @default(0) @map("games_played")
+  gamesWon           Int       @default(0) @map("games_won")
+  totalGuesses       Int       @default(0) @map("total_guesses")
+  hitGuesses         Int       @default(0) @map("hit_guesses")
+  accuracyPercentage Decimal   @default(0.00) @map("accuracy_percentage") @db.Decimal(5, 2)
+  lastPlayedDate     DateTime? @map("last_played_date") @db.Date
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_stats")
+}
+
+model Puzzle {
+  id           String       @id @default(uuid()) @db.Uuid
+  puzzleNumber Int          @unique @map("puzzle_number")
+  title        String       @db.VarChar(255)
+  wikipediaUrl String       @map("wikipedia_url") @db.VarChar(500)
+  difficulty   Difficulty   @default(MEDIUM)
+  status       PuzzleStatus @default(DRAFT)
+  releaseDate  DateTime     @unique @map("release_date") @db.Date
+  createdBy    String?      @map("created_by") @db.Uuid
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  creator      User?          @relation("CreatedPuzzles", fields: [createdBy], references: [id], onDelete: SetNull)
+  content      PuzzleContent?
+  gameSessions GameSession[]
+
+  @@map("puzzles")
+}
+
+model PuzzleContent {
+  puzzleId         String @id @map("puzzle_id") @db.Uuid
+  summaryLead      String @map("summary_lead") @db.Text
+  tokenData        Json   @map("token_data") @db.JsonB
+  totalTokensCount Int    @map("total_tokens_count")
+  stopWordsCount   Int    @map("stop_words_count")
+
+  puzzle Puzzle @relation(fields: [puzzleId], references: [id], onDelete: Cascade)
+
+  @@map("puzzle_contents")
+}
+
+model GameSession {
+  id              String        @id @default(uuid()) @db.Uuid
+  userId          String?       @map("user_id") @db.Uuid
+  puzzleId        String        @map("puzzle_id") @db.Uuid
+  status          SessionStatus @default(IN_PROGRESS)
+  guessesCount    Int           @default(0) @map("guesses_count")
+  hitsCount       Int           @default(0) @map("hits_count")
+  hintsUsed       Int           @default(0) @map("hints_used")
+  durationSeconds Int           @default(0) @map("duration_seconds")
+  startedAt       DateTime      @default(now()) @map("started_at") @db.Timestamptz(6)
+  completedAt     DateTime?     @map("completed_at") @db.Timestamptz(6)
+
+  user      User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  puzzle    Puzzle     @relation(fields: [puzzleId], references: [id], onDelete: Cascade)
+  guessLogs GuessLog[]
+
+  @@map("game_sessions")
+}
+
+model GuessLog {
+  id             String   @id @default(uuid()) @db.Uuid
+  sessionId      String   @map("session_id") @db.Uuid
+  wordRaw        String   @map("word_raw") @db.VarChar(100)
+  normalizedStem String   @map("normalized_stem") @db.VarChar(100)
+  matchCount     Int      @default(0) @map("match_count")
+  guessOrder     Int      @map("guess_order")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  session GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("guess_logs")
+}
+
+model Achievement {
+  id                String          @id @default(uuid()) @db.Uuid
+  code              AchievementCode @unique
+  title             String          @db.VarChar(100)
+  description       String          @db.Text
+  badgeIcon         String          @map("badge_icon") @db.VarChar(100)
+  requiredThreshold Int             @default(1) @map("required_threshold")
+  createdAt         DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  userId        String   @map("user_id") @db.Uuid
+  achievementId String   @map("achievement_id") @db.Uuid
+  unlockedAt    DateTime @default(now()) @map("unlocked_at") @db.Timestamptz(6)
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@id([userId, achievementId])
+  @@map("user_achievements")
+}
