@@ -1,13 +1,16 @@
 import React from 'react';
-import type { Puzzle, PlayerStats, ThemeMode } from '@/types/game';
+import type { Puzzle, PlayerStats, ThemeMode, UserProfile, AchievementItem } from '@/types/game';
 import { HowToPlayModal } from '@/components/modals/HowToPlayModal';
 import { StatsModal } from '@/components/modals/StatsModal';
 import { ArchiveModal } from '@/components/modals/ArchiveModal';
+import { LeaderboardModal } from '@/components/modals/LeaderboardModal';
+import { EditorAdminModal } from '@/components/modals/EditorAdminModal';
+import { AuthModal } from '@/components/modals/AuthModal';
 import { SettingsModal } from '@/components/modals/SettingsModal';
 import { HintModal } from '@/components/modals/HintModal';
 import { WinModal } from '@/components/modals/WinModal';
 
-export interface ModalsLayerProps {
+interface ModalsLayerProps {
   isHowToPlayOpen: boolean;
   onCloseHowToPlay: () => void;
 
@@ -19,6 +22,18 @@ export interface ModalsLayerProps {
   onCloseArchive: () => void;
   currentPuzzleNumber: number;
   onSelectPuzzle: (puzzleNumber: number) => void;
+
+  isLeaderboardOpen?: boolean;
+  onCloseLeaderboard?: () => void;
+  onOpenLeaderboard?: () => void;
+
+  isEditorAdminOpen?: boolean;
+  onCloseEditorAdmin?: () => void;
+
+  isAuthOpen?: boolean;
+  onCloseAuth?: () => void;
+  onOpenAuth?: () => void;
+  user?: UserProfile | null;
 
   isSettingsOpen: boolean;
   onCloseSettings: () => void;
@@ -32,8 +47,10 @@ export interface ModalsLayerProps {
   onCloseHint: () => void;
   onUseFreeHint: () => void;
   onUseTitleHint: () => void;
+  basicHintsUsed?: number;
   freeHintUsed: boolean;
   titleHintUsed: boolean;
+  totalTitleWords?: number;
   remainingTitleWords: number;
 
   isWinModalOpen: boolean;
@@ -41,7 +58,10 @@ export interface ModalsLayerProps {
   puzzle: Puzzle | null;
   totalGuesses: number;
   hitGuesses: number;
+  hintsUsedCount?: number;
   durationSeconds: number;
+  unlockedAchievements?: AchievementItem[];
+  onOpenArchive?: () => void;
 }
 
 export const ModalsLayer: React.FC<ModalsLayerProps> = ({
@@ -54,6 +74,15 @@ export const ModalsLayer: React.FC<ModalsLayerProps> = ({
   onCloseArchive,
   currentPuzzleNumber,
   onSelectPuzzle,
+  isLeaderboardOpen = false,
+  onCloseLeaderboard = () => {},
+  onOpenLeaderboard,
+  isEditorAdminOpen = false,
+  onCloseEditorAdmin = () => {},
+  isAuthOpen = false,
+  onCloseAuth = () => {},
+  onOpenAuth,
+  user = null,
   isSettingsOpen,
   onCloseSettings,
   theme,
@@ -65,22 +94,29 @@ export const ModalsLayer: React.FC<ModalsLayerProps> = ({
   onCloseHint,
   onUseFreeHint,
   onUseTitleHint,
+  basicHintsUsed = 0,
   freeHintUsed,
   titleHintUsed,
+  totalTitleWords = 2,
   remainingTitleWords,
   isWinModalOpen,
   onCloseWin,
   puzzle,
   totalGuesses,
   hitGuesses,
-  durationSeconds
+  hintsUsedCount,
+  durationSeconds,
+  unlockedAchievements = [],
+  onOpenArchive
 }) => {
+  const hintsUsed =
+    typeof hintsUsedCount === 'number'
+      ? hintsUsedCount
+      : (freeHintUsed ? 1 : 0) + (titleHintUsed ? 1 : 0);
+
   return (
     <>
-      <HowToPlayModal
-        isOpen={isHowToPlayOpen}
-        onClose={onCloseHowToPlay}
-      />
+      <HowToPlayModal isOpen={isHowToPlayOpen} onClose={onCloseHowToPlay} />
 
       <StatsModal
         isOpen={isStatsOpen}
@@ -93,6 +129,25 @@ export const ModalsLayer: React.FC<ModalsLayerProps> = ({
         onClose={onCloseArchive}
         currentPuzzleNumber={currentPuzzleNumber}
         onSelectPuzzle={onSelectPuzzle}
+        user={user}
+        onRequestLogin={onOpenAuth}
+      />
+
+      <LeaderboardModal
+        isOpen={isLeaderboardOpen}
+        onClose={onCloseLeaderboard}
+        user={user}
+      />
+
+      <EditorAdminModal
+        isOpen={isEditorAdminOpen}
+        onClose={onCloseEditorAdmin}
+        user={user}
+      />
+
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={onCloseAuth}
       />
 
       <SettingsModal
@@ -110,8 +165,10 @@ export const ModalsLayer: React.FC<ModalsLayerProps> = ({
         onClose={onCloseHint}
         onUseFreeHint={onUseFreeHint}
         onUseTitleHint={onUseTitleHint}
+        basicHintsUsed={basicHintsUsed}
         freeHintUsed={freeHintUsed}
         titleHintUsed={titleHintUsed}
+        totalTitleWords={totalTitleWords}
         titleWordsRemaining={remainingTitleWords}
       />
 
@@ -124,9 +181,12 @@ export const ModalsLayer: React.FC<ModalsLayerProps> = ({
           wikipediaUrl={puzzle.wikipediaUrl}
           totalGuesses={totalGuesses}
           hitGuesses={hitGuesses}
-          hintsUsed={(freeHintUsed ? 1 : 0) + (titleHintUsed ? 1 : 0)}
+          hintsUsed={hintsUsed}
           currentStreak={playerStats.currentStreak}
           durationSeconds={durationSeconds}
+          unlockedAchievements={unlockedAchievements}
+          onOpenLeaderboard={onOpenLeaderboard}
+          onOpenArchive={onOpenArchive}
         />
       )}
     </>
